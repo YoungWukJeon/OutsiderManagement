@@ -51,17 +51,6 @@
                     android:textStyle="bold"
                     android:id="@+id/id_textView"/>
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10sp"
-                    android:textColor="@android:color/black"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    android:inputType="date"
-                    android:visibility="gone"
-                    android:id="@+id/id_editText"/>
-
             </LinearLayout>
 
             <LinearLayout

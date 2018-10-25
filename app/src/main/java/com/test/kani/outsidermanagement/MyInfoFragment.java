@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class MyInfoFragment extends Fragment
 {
     TextView idTextView, passwordTextView, fromTextView, classTextView, nameTextView, phoneTextView, supervisorTextView, startDateTextView, endDateTextView;
-    EditText idEditText, passwordEditText, fromEditText, classEditText, nameEditText, phoneEditText, supervisorEditText, startDateEditText, endDateEditText;
+    EditText passwordEditText, fromEditText, classEditText, nameEditText, phoneEditText, supervisorEditText, startDateEditText, endDateEditText;
     Button modifyBtn, saveBtn, cancelBtn;
 
     private HashMap<String, String> myInfoMap;
@@ -65,7 +65,6 @@ public class MyInfoFragment extends Fragment
         this.startDateTextView = view.findViewById(R.id.start_date_textView);
         this.endDateTextView = view.findViewById(R.id.end_date_textView);
 
-        this.idEditText = view.findViewById(R.id.id_editText);
         this.passwordEditText = view.findViewById(R.id.password_editText);
         this.fromEditText = view.findViewById(R.id.from_editText);
         this.classEditText = view.findViewById(R.id.class_editText);
@@ -134,7 +133,6 @@ public class MyInfoFragment extends Fragment
 
     private void moveTextFromTextView()
     {
-        this.idEditText.setText(this.idTextView.getText().toString().trim());
         this.passwordEditText.setText(this.passwordTextView.getText().toString().trim());
         this.fromEditText.setText(this.fromTextView.getText().toString().trim());
         this.classEditText.setText(this.classTextView.getText().toString().trim());
@@ -147,7 +145,6 @@ public class MyInfoFragment extends Fragment
 
     private void moveTextFromEditText()
     {
-        this.idTextView.setText(this.idEditText.getText().toString().trim());
         this.passwordTextView.setText(this.passwordEditText.getText().toString().trim());
         this.fromTextView.setText(this.fromEditText.getText().toString().trim());
         this.classTextView.setText(this.classEditText.getText().toString().trim());
@@ -160,7 +157,6 @@ public class MyInfoFragment extends Fragment
 
     private void changeMyInfo()
     {
-        this.myInfoMap.put("id", this.idEditText.getText().toString().trim());
         this.myInfoMap.put("password", this.passwordEditText.getText().toString().trim());
         this.myInfoMap.put("from", this.fromEditText.getText().toString().trim());
         this.myInfoMap.put("class", this.classEditText.getText().toString().trim());
@@ -186,7 +182,6 @@ public class MyInfoFragment extends Fragment
 
     private void switchEditText(int visibility)
     {
-        this.idEditText.setVisibility(visibility);
         this.passwordEditText.setVisibility(visibility);
         this.fromEditText.setVisibility(visibility);
         this.classEditText.setVisibility(visibility);
