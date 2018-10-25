@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity
 
 //        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MyInfoFragment()).commit();
 //        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ReportFragment()).commit();
-        bottomNavigationView.setSelectedItemId(R.id.call_visit_menu);
+        bottomNavigationView.setSelectedItemId(R.id.outsider_management_menu);
 //        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CallVisitFragment()).commit();
 //        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OutsiderManagementFragment()).commit();
     }

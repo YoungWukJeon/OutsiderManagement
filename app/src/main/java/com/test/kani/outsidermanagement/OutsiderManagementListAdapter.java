@@ -7,25 +7,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class CallVisitListAdapter extends BaseAdapter
+public class OutsiderManagementListAdapter extends BaseAdapter
 {
-    TextView classTextView, nameTextView, reportDateTextView, outsiderDuringTextView;
-    ImageButton telImageButton;
-    LinearLayout callVisitItemLinearLayout;
+    TextView classTextView, nameTextView, outsiderDuringTextView, outsiderReasonTextView;
+    CheckBox selectCheckBox;
+    LinearLayout outsiderManagementItemLinearLayout;
 
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<HashMap<String, Object>> list;
     private int layout;
 
-    public CallVisitListAdapter(Context context, int layout, ArrayList<HashMap<String, Object>> list)
+    public OutsiderManagementListAdapter(Context context, int layout, ArrayList<HashMap<String, Object>> list)
     {
         this.context = context;
         this.layout = layout;
@@ -51,7 +51,7 @@ public class CallVisitListAdapter extends BaseAdapter
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup)
+    public View getView(final int i, View view, ViewGroup viewGroup)
     {
         if( view == null )
         {
@@ -60,33 +60,35 @@ public class CallVisitListAdapter extends BaseAdapter
         }
 
         // Bind views
-        this.callVisitItemLinearLayout = ViewHolder.get(view, R.id.call_visit_item_linear_layout);
+        this.outsiderManagementItemLinearLayout = ViewHolder.get(view, R.id.outsider_management_item_linear_layout);
+        this.selectCheckBox = ViewHolder.get(view, R.id.select_checkBox);
         this.classTextView = ViewHolder.get(view, R.id.class_textView);
         this.nameTextView = ViewHolder.get(view, R.id.name_textView);
-        this.reportDateTextView = ViewHolder.get(view, R.id.report_date_textView);
         this.outsiderDuringTextView = ViewHolder.get(view, R.id.outsider_during_textView);
-        this.telImageButton = ViewHolder.get(view, R.id.tel_imageBtn);
+        this.outsiderReasonTextView = ViewHolder.get(view, R.id.outsider_reason_textView);
 
         // Set attributes
         if ("관심".equals(this.list.get(i).get("type").toString().trim()))
-            this.callVisitItemLinearLayout.setBackgroundColor(Color.parseColor("#FB6F53"));
+            this.outsiderManagementItemLinearLayout.setBackgroundColor(Color.parseColor("#FB6F53"));
         else if ("배려".equals(this.list.get(i).get("type").toString().trim()))
-            this.callVisitItemLinearLayout.setBackgroundColor(Color.parseColor("#FFF2CC"));
+            this.outsiderManagementItemLinearLayout.setBackgroundColor(Color.parseColor("#FFF2CC"));
         else if ("일반".equals(this.list.get(i).get("type").toString().trim()))
-            this.callVisitItemLinearLayout.setBackgroundColor(Color.parseColor("#A9D18E"));
+            this.outsiderManagementItemLinearLayout.setBackgroundColor(Color.parseColor("#A9D18E"));
 
+        this.selectCheckBox.setChecked((boolean) this.list.get(i).get("checked"));
         this.classTextView.setText(this.list.get(i).get("class").toString().trim());
         this.nameTextView.setText(this.list.get(i).get("name").toString().trim());
-        this.reportDateTextView.setText(this.list.get(i).get("reportDate").toString().trim());
         this.outsiderDuringTextView.setText(this.list.get(i).get("outsiderDuring").toString().trim());
+        this.outsiderReasonTextView.setText(this.list.get(i).get("outsiderReason").toString().trim());
 
         // Add Events
-        this.telImageButton.setOnClickListener(new View.OnClickListener()
+        this.selectCheckBox.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                Log.d("telImageButton", "Clicked : ");
+                Log.d("selectCheckBox", "Clicked : ");
+                list.get(i).put("checked", ((CheckBox) v).isChecked());
             }
         });
 

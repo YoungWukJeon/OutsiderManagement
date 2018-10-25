@@ -30,7 +30,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:orientation="horizontal">
 
                 <TextView
@@ -39,21 +38,24 @@
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
                     android:text="군번 | "
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:textSize="30sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:id="@+id/id_textView"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
                     android:layout_marginRight="10sp"
+                    android:textColor="@android:color/black"
                     android:textSize="30sp"
                     android:textStyle="bold"
                     android:inputType="date"
@@ -74,23 +76,26 @@
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
                     android:text="비밀번호 | "
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:textSize="30sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
                     android:password="true"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:id="@+id/password_textView"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
+                    android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:inputType="textPassword"
                     android:visibility="gone"
@@ -110,22 +115,25 @@
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
                     android:text="소속 | "
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:textSize="30sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:id="@+id/from_textView"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
+                    android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:inputType="text"
                     android:visibility="gone"
@@ -145,12 +153,15 @@
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
                     android:text="계급 | "
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:textSize="30sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
                     android:id="@+id/class_textView"/>
@@ -158,7 +169,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
                     android:textStyle="bold"
@@ -180,12 +191,15 @@
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
                     android:text="이름 | "
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:textSize="30sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
                     android:id="@+id/name_textView"/>
@@ -193,10 +207,10 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
-                    android:textStyle="bold"
                     android:inputType="text"
                     android:visibility="gone"
                     android:id="@+id/name_editText"/>
@@ -214,13 +228,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:text="연락처 | "
                     android:textSize="30sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
                     android:id="@+id/phone_textView"/>
@@ -228,10 +245,10 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
-                    android:textStyle="bold"
                     android:inputType="date"
                     android:visibility="gone"
                     android:id="@+id/phone_editText"/>
@@ -249,13 +266,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:text="직속상관군번 | "
                     android:textSize="30sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
                     android:id="@+id/supervisor_textView"/>
@@ -263,10 +283,10 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
-                    android:textStyle="bold"
                     android:inputType="date"
                     android:visibility="gone"
                     android:id="@+id/supervisor_editText"/>
@@ -285,12 +305,15 @@
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
                     android:text="입대일 | "
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:textSize="30sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
                     android:id="@+id/start_date_textView"/>
@@ -298,10 +321,10 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
-                    android:textStyle="bold"
                     android:inputType="date"
                     android:visibility="gone"
                     android:id="@+id/start_date_editText"/>
@@ -320,12 +343,15 @@
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
                     android:text="전역일 | "
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:textSize="30sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
                     android:id="@+id/end_date_textView"/>
@@ -333,10 +359,10 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
                     android:textSize="30sp"
-                    android:textStyle="bold"
                     android:inputType="date"
                     android:visibility="gone"
                     android:id="@+id/end_date_editText"/>

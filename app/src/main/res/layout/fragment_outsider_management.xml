@@ -1,14 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/holo_orange_light">
 
-    <TextView
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:layout_marginBottom="20sp"
+            android:text="출타자 관리"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center"/>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="90sp"
+            android:background="#333">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60sp"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:buttonTint="@android:color/white"
+                    android:background="@drawable/border1"
+                    android:id="@+id/select_checkBox"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:text="계급"
+                    android:background="@drawable/border1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:text="이름"
+                    android:background="@drawable/border1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:text="출타 일자"
+                    android:background="@drawable/border1"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30sp"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="출타 사유"
+                android:background="@drawable/border1"/>
+
+        </LinearLayout>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10sp"
+            android:id="@+id/outsider_management_listView"
+            android:choiceMode="singleChoice"/>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_floatingBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OutsiderManagement Fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="true"/>
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="80sp"
+        android:layout_marginBottom="15sp"
+        android:backgroundTint="#008577"
+        android:src="@drawable/ic_add_white_24dp" />
 
-</RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/remove_floatingBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="15sp"
+        android:backgroundTint="#008577"
+        android:src="@drawable/ic_remove_white_24dp" />
+
+</FrameLayout>

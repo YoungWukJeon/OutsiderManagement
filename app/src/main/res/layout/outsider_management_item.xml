@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="90sp"
+              android:layout_marginLeft="10sp"
+              android:layout_marginRight="10sp"
+              android:id="@+id/outsider_management_item_linear_layout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:orientation="horizontal"
+        android:background="@drawable/border1">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:buttonTint="@android:color/black"
+            android:background="@drawable/border1"
+            android:id="@+id/select_checkBox"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:id="@+id/class_textView"
+            android:background="@drawable/border1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:id="@+id/name_textView"
+            android:background="@drawable/border1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:id="@+id/outsider_during_textView"
+            android:background="@drawable/border1"/>
+
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:id="@+id/outsider_reason_textView"
+        android:background="@drawable/border1"/>
+
+</LinearLayout>
