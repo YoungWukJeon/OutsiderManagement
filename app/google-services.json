@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "493793961739",
+    "firebase_url": "https://outsidermanagement123.firebaseio.com",
+    "project_id": "outsidermanagement123",
+    "storage_bucket": "outsidermanagement123.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493793961739:android:52f74e2c5f7044c9",
+        "android_client_info": {
+          "package_name": "com.test.kani.outsidermanagement"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "493793961739-nehu3rimgme1c6ds12ppfgmfu1pa591j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0xTsoQ3ixpJUlabsRmixFWK8VYdrEnb0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
