@@ -19,7 +19,7 @@ public class MyInfoFragment extends Fragment
     EditText passwordEditText, fromEditText, classEditText, nameEditText, phoneEditText, supervisorEditText, startDateEditText, endDateEditText;
     Button modifyBtn, saveBtn, cancelBtn;
 
-    private HashMap<String, String> myInfoMap;
+    private HashMap<String, Object> myInfoMap;
 
     @Nullable
     @Override
@@ -40,13 +40,13 @@ public class MyInfoFragment extends Fragment
         Log.d("MyInfoFragment", "Initialize my info");
         this.myInfoMap = new HashMap<> ();
 
-        this.myInfoMap.put("officer", "true");  // 병인지 간부인지 여부
+        this.myInfoMap.put("officer", true);  // 병인지 간부인지 여부
         this.myInfoMap.put("id", "18-00001");
         this.myInfoMap.put("password", "1q2w3e4r!!");
         this.myInfoMap.put("from", "111연대 통신중대");
         this.myInfoMap.put("class", "소위");
         this.myInfoMap.put("name", "아무개");
-        this.myInfoMap.put("phone", "010-1234-5678");
+        this.myInfoMap.put("tel", "010-1234-5678");
         this.myInfoMap.put("supervisor", "없음");
         this.myInfoMap.put("startDate", "2018-03-02");
         this.myInfoMap.put("endDate", "2020-06-30");
@@ -79,15 +79,15 @@ public class MyInfoFragment extends Fragment
         this.cancelBtn = view.findViewById(R.id.cancel_btn);
 
         // Set Attributes
-        this.idTextView.setText(this.myInfoMap.get("id").trim());
-        this.passwordTextView.setText(this.myInfoMap.get("password").trim());
-        this.fromTextView.setText(this.myInfoMap.get("from").trim());
-        this.classTextView.setText(this.myInfoMap.get("class").trim());
-        this.nameTextView.setText(this.myInfoMap.get("name").trim());
-        this.phoneTextView.setText(this.myInfoMap.get("phone").trim());
-        this.supervisorTextView.setText(this.myInfoMap.get("supervisor").trim());
-        this.startDateTextView.setText(this.myInfoMap.get("startDate").trim());
-        this.endDateTextView.setText(this.myInfoMap.get("endDate").trim());
+        this.idTextView.setText(this.myInfoMap.get("id").toString().trim());
+        this.passwordTextView.setText(this.myInfoMap.get("password").toString().trim());
+        this.fromTextView.setText(this.myInfoMap.get("from").toString().trim());
+        this.classTextView.setText(this.myInfoMap.get("class").toString().trim());
+        this.nameTextView.setText(this.myInfoMap.get("name").toString().trim());
+        this.phoneTextView.setText(this.myInfoMap.get("tel").toString().trim());
+        this.supervisorTextView.setText(this.myInfoMap.get("supervisor").toString().trim());
+        this.startDateTextView.setText(this.myInfoMap.get("startDate").toString().trim());
+        this.endDateTextView.setText(this.myInfoMap.get("endDate").toString().trim());
 
         // Add Events
         this.modifyBtn.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +161,7 @@ public class MyInfoFragment extends Fragment
         this.myInfoMap.put("from", this.fromEditText.getText().toString().trim());
         this.myInfoMap.put("class", this.classEditText.getText().toString().trim());
         this.myInfoMap.put("name", this.nameEditText.getText().toString().trim());
-        this.myInfoMap.put("phone", this.phoneEditText.getText().toString().trim());
+        this.myInfoMap.put("tel", this.phoneEditText.getText().toString().trim());
         this.myInfoMap.put("supervisor", this.supervisorEditText.getText().toString().trim());
         this.myInfoMap.put("startDate", this.startDateEditText.getText().toString().trim());
         this.myInfoMap.put("endDate", this.endDateEditText.getText().toString().trim());
@@ -169,7 +169,6 @@ public class MyInfoFragment extends Fragment
 
     private void switchTextView(int visibility)
     {
-        this.idTextView.setVisibility(visibility);
         this.passwordTextView.setVisibility(visibility);
         this.fromTextView.setVisibility(visibility);
         this.classTextView.setVisibility(visibility);

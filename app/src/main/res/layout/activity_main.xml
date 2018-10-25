@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_navigation">
 
-
     </FrameLayout>
 
     <android.support.design.widget.BottomNavigationView

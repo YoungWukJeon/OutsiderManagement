@@ -57,35 +57,35 @@ public class CallVisitFragment extends Fragment
         temp2.put("class", "병장");
         temp2.put("name", "유성우");
         temp2.put("reportDate", "2018.10.25 16:17");    // currentTimeMillis로 바꿀예정
-        temp2.put("tel", "010-1234-5567");
+        temp2.put("tel", "010-1111-2222");
         temp2.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");
 
         temp3.put("type", "배려");
         temp3.put("class", "병장");
         temp3.put("name", "유성우");
         temp3.put("reportDate", "2018.10.25 16:17");    // currentTimeMillis로 바꿀예정
-        temp3.put("tel", "010-1234-5567");
+        temp3.put("tel", "010-3333-4444");
         temp3.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");
 
         temp4.put("type", "배려");
         temp4.put("class", "일병");
         temp4.put("name", "유성우");
         temp4.put("reportDate", "2018.10.25 16:17");    // currentTimeMillis로 바꿀예정
-        temp4.put("tel", "010-1234-5567");
+        temp4.put("tel", "010-5555-6666");
         temp4.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");
 
         temp5.put("type", "일반");
         temp5.put("class", "이병");
         temp5.put("name", "유성우");
         temp5.put("reportDate", "2018.10.25 16:17");    // currentTimeMillis로 바꿀예정
-        temp5.put("tel", "010-1234-5567");
+        temp5.put("tel", "010-7777-8888");
         temp5.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");
 
         temp6.put("type", "관심");
         temp6.put("class", "이병");
         temp6.put("name", "유성우");
         temp6.put("reportDate", "2018.10.25 16:17");    // currentTimeMillis로 바꿀예정
-        temp6.put("tel", "010-1234-5567");
+        temp6.put("tel", "010-9999-0000");
         temp6.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");
 
         this.callVisitList.add(temp1);

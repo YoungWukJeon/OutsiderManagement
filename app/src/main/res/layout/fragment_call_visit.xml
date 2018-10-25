@@ -7,10 +7,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20sp"
-        android:layout_marginBottom="20sp"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="10sp"
         android:text="Call-visit 확인"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
         android:layout_gravity="center"/>

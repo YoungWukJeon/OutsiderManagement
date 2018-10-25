@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
+    static boolean isOfficer = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity
 
 //        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MyInfoFragment()).commit();
 //        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ReportFragment()).commit();
-        bottomNavigationView.setSelectedItemId(R.id.outsider_management_menu);
+        bottomNavigationView.setSelectedItemId(R.id.report_menu);
 //        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CallVisitFragment()).commit();
 //        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OutsiderManagementFragment()).commit();
     }
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case R.id.report_menu:
                     selectedFragment = new ReportFragment();
+//                    Toast.makeText(getApplicationContext(), "보고", Toast.LENGTH_SHORT);
                     break;
                 case R.id.call_visit_menu:
                     selectedFragment = new CallVisitFragment();
@@ -56,7 +59,8 @@ public class MainActivity extends AppCompatActivity
                     break;
             }
 
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+            if( selectedFragment != null )
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
 
             return true;
         }

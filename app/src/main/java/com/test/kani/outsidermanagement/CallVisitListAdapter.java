@@ -1,7 +1,9 @@
 package com.test.kani.outsidermanagement;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +53,7 @@ public class CallVisitListAdapter extends BaseAdapter
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup)
+    public View getView(final int i, View view, ViewGroup viewGroup)
     {
         if( view == null )
         {
@@ -87,6 +89,10 @@ public class CallVisitListAdapter extends BaseAdapter
             public void onClick(View v)
             {
                 Log.d("telImageButton", "Clicked : ");
+
+                Intent intent  = new Intent(Intent.ACTION_DIAL, Uri.parse("tel: " + list.get(i).get("tel")));
+
+                context.startActivity(intent);
             }
         });
 
