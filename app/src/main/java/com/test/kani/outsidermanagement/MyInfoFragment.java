@@ -15,11 +15,11 @@ import java.util.HashMap;
 
 public class MyInfoFragment extends Fragment
 {
-    TextView idTextView, passwordTextView, fromTextView, classTextView, nameTextView, phoneTextView, supervisorTextView, startDateTextView, endDateTextView;
-    EditText passwordEditText, fromEditText, classEditText, nameEditText, phoneEditText, supervisorEditText, startDateEditText, endDateEditText;
+    TextView idTextView, passwordTextView, fromTextView, classTextView, nameTextView, telTextView, supervisorTextView, startDateTextView, endDateTextView;
+    EditText passwordEditText, fromEditText, classEditText, nameEditText, telEditText, supervisorEditText, startDateEditText, endDateEditText;
     Button modifyBtn, saveBtn, cancelBtn;
 
-    private HashMap<String, Object> myInfoMap;
+    HashMap<String, Object> myInfoMap;
 
     @Nullable
     @Override
@@ -60,7 +60,7 @@ public class MyInfoFragment extends Fragment
         this.fromTextView = view.findViewById(R.id.from_textView);
         this.classTextView = view.findViewById(R.id.class_textView);
         this.nameTextView = view.findViewById(R.id.name_textView);
-        this.phoneTextView = view.findViewById(R.id.phone_textView);
+        this.telTextView = view.findViewById(R.id.tel_textView);
         this.supervisorTextView = view.findViewById(R.id.supervisor_textView);
         this.startDateTextView = view.findViewById(R.id.start_date_textView);
         this.endDateTextView = view.findViewById(R.id.end_date_textView);
@@ -69,7 +69,7 @@ public class MyInfoFragment extends Fragment
         this.fromEditText = view.findViewById(R.id.from_editText);
         this.classEditText = view.findViewById(R.id.class_editText);
         this.nameEditText = view.findViewById(R.id.name_editText);
-        this.phoneEditText = view.findViewById(R.id.phone_editText);
+        this.telEditText = view.findViewById(R.id.tel_editText);
         this.supervisorEditText = view.findViewById(R.id.supervisor_editText);
         this.startDateEditText = view.findViewById(R.id.start_date_editText);
         this.endDateEditText = view.findViewById(R.id.end_date_editText);
@@ -84,7 +84,7 @@ public class MyInfoFragment extends Fragment
         this.fromTextView.setText(this.myInfoMap.get("from").toString().trim());
         this.classTextView.setText(this.myInfoMap.get("class").toString().trim());
         this.nameTextView.setText(this.myInfoMap.get("name").toString().trim());
-        this.phoneTextView.setText(this.myInfoMap.get("tel").toString().trim());
+        this.telTextView.setText(this.myInfoMap.get("tel").toString().trim());
         this.supervisorTextView.setText(this.myInfoMap.get("supervisor").toString().trim());
         this.startDateTextView.setText(this.myInfoMap.get("startDate").toString().trim());
         this.endDateTextView.setText(this.myInfoMap.get("endDate").toString().trim());
@@ -137,7 +137,7 @@ public class MyInfoFragment extends Fragment
         this.fromEditText.setText(this.fromTextView.getText().toString().trim());
         this.classEditText.setText(this.classTextView.getText().toString().trim());
         this.nameEditText.setText(this.nameTextView.getText().toString().trim());
-        this.phoneEditText.setText(this.phoneTextView.getText().toString().trim());
+        this.telEditText.setText(this.telTextView.getText().toString().trim());
         this.supervisorEditText.setText(this.supervisorTextView.getText().toString().trim());
         this.startDateEditText.setText(this.startDateTextView.getText().toString().trim());
         this.endDateEditText.setText(this.endDateTextView.getText().toString().trim());
@@ -149,7 +149,7 @@ public class MyInfoFragment extends Fragment
         this.fromTextView.setText(this.fromEditText.getText().toString().trim());
         this.classTextView.setText(this.classEditText.getText().toString().trim());
         this.nameTextView.setText(this.nameEditText.getText().toString().trim());
-        this.phoneTextView.setText(this.phoneEditText.getText().toString().trim());
+        this.telTextView.setText(this.telEditText.getText().toString().trim());
         this.supervisorTextView.setText(this.supervisorEditText.getText().toString().trim());
         this.startDateTextView.setText(this.startDateEditText.getText().toString().trim());
         this.endDateTextView.setText(this.endDateEditText.getText().toString().trim());
@@ -161,7 +161,7 @@ public class MyInfoFragment extends Fragment
         this.myInfoMap.put("from", this.fromEditText.getText().toString().trim());
         this.myInfoMap.put("class", this.classEditText.getText().toString().trim());
         this.myInfoMap.put("name", this.nameEditText.getText().toString().trim());
-        this.myInfoMap.put("tel", this.phoneEditText.getText().toString().trim());
+        this.myInfoMap.put("tel", this.telEditText.getText().toString().trim());
         this.myInfoMap.put("supervisor", this.supervisorEditText.getText().toString().trim());
         this.myInfoMap.put("startDate", this.startDateEditText.getText().toString().trim());
         this.myInfoMap.put("endDate", this.endDateEditText.getText().toString().trim());
@@ -173,7 +173,7 @@ public class MyInfoFragment extends Fragment
         this.fromTextView.setVisibility(visibility);
         this.classTextView.setVisibility(visibility);
         this.nameTextView.setVisibility(visibility);
-        this.phoneTextView.setVisibility(visibility);
+        this.telTextView.setVisibility(visibility);
         this.supervisorTextView.setVisibility(visibility);
         this.startDateTextView.setVisibility(visibility);
         this.endDateTextView.setVisibility(visibility);
@@ -185,7 +185,7 @@ public class MyInfoFragment extends Fragment
         this.fromEditText.setVisibility(visibility);
         this.classEditText.setVisibility(visibility);
         this.nameEditText.setVisibility(visibility);
-        this.phoneEditText.setVisibility(visibility);
+        this.telEditText.setVisibility(visibility);
         this.supervisorEditText.setVisibility(visibility);
         this.startDateEditText.setVisibility(visibility);
         this.endDateEditText.setVisibility(visibility);

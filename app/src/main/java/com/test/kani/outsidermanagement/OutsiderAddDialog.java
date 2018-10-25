@@ -171,7 +171,7 @@ public class OutsiderAddDialog extends BaseDialog
 
     private String getType()
     {
-        switch( typeRadioGroup.getCheckedRadioButtonId() )
+        switch( this.typeRadioGroup.getCheckedRadioButtonId() )
         {
             case R.id.option1:
                 return "일반";
