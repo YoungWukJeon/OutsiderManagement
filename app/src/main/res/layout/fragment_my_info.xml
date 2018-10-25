@@ -10,7 +10,7 @@
         android:layout_marginTop="20sp"
         android:layout_marginBottom="20sp"
         android:text="내 정보"
-        android:textSize="50sp"
+        android:textSize="40sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
         android:layout_gravity="center"/>
