@@ -66,7 +66,7 @@ public class ReportListAdapter extends BaseAdapter
         this.reportContentTextView = ViewHolder.get(view, R.id.report_content_textView);
 
         // Set attributes
-        if( MainActivity.isOfficer )
+        if( (boolean) MainActivity.myInfoMap.get("officer") )
         {
             if ("관심".equals(this.list.get(i).get("type").toString().trim()))
                 this.reportItemLinearLayout.setBackgroundColor(Color.parseColor("#FB6F53"));
@@ -80,7 +80,7 @@ public class ReportListAdapter extends BaseAdapter
         this.reportContentTextView.setText(this.list.get(i).get("reportContent").toString().trim());
 
         // 로그인 아이디로 확인해야됨
-        if( !(boolean) MainActivity.isOfficer )        // 병이면
+        if( !(boolean) MainActivity.myInfoMap.get("officer") )        // 병이면
             this.subtitleLinearLayout.setVisibility(LinearLayout.GONE);
         else
         {

@@ -152,6 +152,8 @@ public class OutsiderManagementFragment extends Fragment
                     public void updateComponent(Object obj)
                     {
 //                        setResult();
+                        outsiderManagementList.add((HashMap<String, Object>) obj);
+                        adapter.notifyDataSetChanged();
                     }
                 });
 

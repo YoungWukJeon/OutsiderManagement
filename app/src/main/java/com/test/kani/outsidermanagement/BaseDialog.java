@@ -27,6 +27,6 @@ public class BaseDialog extends Dialog
 
     public interface UpdateComponentListener
     {
-        void updateComponent(Object ojb);
+        void updateComponent(Object obj);
     }
 }

@@ -3,20 +3,19 @@ package com.test.kani.outsidermanagement;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
 {
-
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-
-    static boolean isOfficer = false;
-
+    public static HashMap<String, Object> myInfoMap = new HashMap<> ();
+    public static QueryDocumentSnapshot document;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -27,12 +26,7 @@ public class MainActivity extends AppCompatActivity
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
 
-
-//        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MyInfoFragment()).commit();
-//        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ReportFragment()).commit();
-        bottomNavigationView.setSelectedItemId(R.id.report_menu);
-//        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CallVisitFragment()).commit();
-//        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OutsiderManagementFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MyInfoFragment()).commit();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener()
@@ -49,15 +43,26 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case R.id.report_menu:
                     selectedFragment = new ReportFragment();
-//                    Toast.makeText(getApplicationContext(), "보고", Toast.LENGTH_SHORT);
                     break;
                 case R.id.call_visit_menu:
                     selectedFragment = new CallVisitFragment();
+                    if( !(boolean) MainActivity.myInfoMap.get("officer") )
+                    {
+                        Toast.makeText(getApplicationContext(), "용사는 이용할 수 없는 서비스이다.", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                     break;
                 case R.id.outsider_management_menu:
                     selectedFragment = new OutsiderManagementFragment();
+                    if( !(boolean) MainActivity.myInfoMap.get("officer") )
+                    {
+                        Toast.makeText(getApplicationContext(), "용사는 이용할 수 없는 서비스이다.", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                     break;
             }
+
+
 
             if( selectedFragment != null )
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();

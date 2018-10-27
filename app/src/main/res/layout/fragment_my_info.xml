@@ -368,6 +368,14 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="로그아웃"
+                    android:textSize="20sp"
+                    android:id="@+id/logout_btn"
+                    android:focusable="false"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="수정"
                     android:textSize="20sp"
                     android:id="@+id/modify_btn"

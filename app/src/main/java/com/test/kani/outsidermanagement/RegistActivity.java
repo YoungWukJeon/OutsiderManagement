@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RegistActivity extends AppCompatActivity
@@ -52,7 +53,7 @@ public class RegistActivity extends AppCompatActivity
             {
                 Log.d("Regist Button", "Clicked");
 
-                myInfoMap = new HashMap<>();
+                myInfoMap = new HashMap<> ();
 
                 myInfoMap.put("officer", isOfficer());  // 병인지 간부인지 여부
                 myInfoMap.put("id", idEditText.getText().toString().trim());
@@ -61,10 +62,17 @@ public class RegistActivity extends AppCompatActivity
                 myInfoMap.put("class", classEditText.getText().toString().trim());
                 myInfoMap.put("name", nameEditText.getText().toString().trim());
                 myInfoMap.put("tel", telEditText.getText().toString().trim());
-                myInfoMap.put("supervisor", supervisorEditText.getText().toString().trim());
                 myInfoMap.put("startDate", startDateEditText.getText().toString().trim());
                 myInfoMap.put("endDate", endDateEditText.getText().toString().trim());
 
+                if( !(boolean) myInfoMap.get("officer") )
+                    myInfoMap.put("supervisor", supervisorEditText.getText().toString().trim());
+                else
+                {
+                    myInfoMap.put("supervisor", null);
+                    myInfoMap.put("report", new ArrayList());
+                }
+                FireStoreConnectionPool.getInstance().getDB().collection("member").add(myInfoMap);
                 finish();
             }
         });

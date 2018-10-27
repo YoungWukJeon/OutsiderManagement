@@ -38,7 +38,8 @@
                     android:layout_height="match_parent"
                     android:buttonTint="@android:color/white"
                     android:background="@drawable/border1"
-                    android:id="@+id/select_checkBox"/>
+                    android:id="@+id/select_checkBox"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:layout_width="wrap_content"

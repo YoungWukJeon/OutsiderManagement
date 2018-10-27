@@ -2,6 +2,7 @@ package com.test.kani.outsidermanagement;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -15,6 +16,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +38,8 @@ public class ReportFragment extends Fragment
     ArrayList<HashMap<String, Object>> reportList;
     private ReportListAdapter adapter;
 
+    View view;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -38,9 +47,9 @@ public class ReportFragment extends Fragment
     {
         this.initReportList();
 
-        View view = inflater.inflate(R.layout.fragment_report, container, false);
+        view = inflater.inflate(R.layout.fragment_report, container, false);
 
-        this.bindUI(view);
+
         // Inflate the layout for this fragment
         return view;
     }
@@ -51,47 +60,67 @@ public class ReportFragment extends Fragment
 
         this.reportList = new ArrayList<> ();
 
-        HashMap<String, Object> temp1 = new HashMap<> ();
-        HashMap<String, Object> temp2 = new HashMap<> ();
-        HashMap<String, Object> temp3 = new HashMap<> ();
-        HashMap<String, Object> temp4 = new HashMap<> ();
+        if( (boolean) MainActivity.myInfoMap.get("officer") )
+        {
+            for( final HashMap<String, Object> map : (ArrayList<HashMap<String, Object>>) MainActivity.myInfoMap.get("report") )
+            {
+                FireStoreConnectionPool.getInstance().getDB().collection("member").whereEqualTo("id", map.get("id"))
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+                {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task2)
+                    {
+                        if (task2.isSuccessful() && !task2.getResult().isEmpty())
+                        {
+                            for (QueryDocumentSnapshot document2 : task2.getResult() )
+                            {
+                                map.put("class", document2.getData().get("class"));
+                                map.put("name", document2.getData().get("name"));
+                                map.put("checked", false);
+                            }
 
-        temp1.put("type", "관심");
-        temp1.put("checked", false);
-        temp1.put("id", "18-11222421");
-        temp1.put("class", "상병");
-        temp1.put("name", "유성우");
-        temp1.put("reportDate", "2018.10.13 21:07");
-        temp1.put("reportContent", "현재 속초 앞바다에 있습니다. 이상 없습니다!");
+                            reportList.add(map);
+                            bindUI(view);
+                        }
+                        else
+                            Toast.makeText(getContext(), "list recieve fails", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+        else
+        {
+            FireStoreConnectionPool.getInstance().getDB().collection("member").whereEqualTo("id", MainActivity.myInfoMap.get("supervisor"))
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+            {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task)
+                {
+                    if( task.isSuccessful() && !task.getResult().isEmpty() )
+                    {
+                        for (QueryDocumentSnapshot document : task.getResult())
+                            for( final HashMap<String, Object> map : (ArrayList<HashMap<String, Object>>) document.getData().get("report") )
+                            {
+                                if( map.get("id").toString().equals(MainActivity.myInfoMap.get("id").toString()) )
+                                    reportList.add(map);
+                            }
 
-        temp2.put("type", "배려");
-        temp2.put("checked", false);
-        temp2.put("id", "18-11222421");
-        temp2.put("class", "일병");
-        temp2.put("name", "홍길동");
-        temp2.put("reportDate", "2018.10.14 21:07");
-        temp2.put("reportContent", "잘자고 있습니다. 이상");
+                        bindUI(view);
+                    }
+                    else
+                        Toast.makeText(getContext(), "list recieve fails", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
-        temp3.put("type", "일반");
-        temp3.put("checked", false);
-        temp3.put("id", "18-11222421");
-        temp3.put("class", "상병");
-        temp3.put("name", "신상호");
-        temp3.put("reportDate", "2018.09.13 21:07");
-        temp3.put("reportContent", "잘 도착했습니다.");
+//        temp1.put("type", "관심");
+//        temp1.put("checked", false);
+//        temp1.put("id", "18-11222421");
+//        temp1.put("class", "상병");
+//        temp1.put("name", "유성우");
+//        temp1.put("reportDate", "2018.10.13 21:07");
+//        temp1.put("reportContent", "현재 속초 앞바다에 있습니다. 이상 없습니다!");
 
-        temp4.put("type", "일반");
-        temp4.put("checked", false);
-        temp4.put("id", "18-11222421");
-        temp4.put("class", "상병");
-        temp4.put("name", "김명");
-        temp4.put("reportDate", "2018.10.12 21:07");
-        temp4.put("reportContent", "이상무!");
-
-        this.reportList.add(temp1);
-        this.reportList.add(temp2);
-        this.reportList.add(temp3);
-        this.reportList.add(temp4);
     }
 
     private void bindUI(View view)
@@ -107,7 +136,7 @@ public class ReportFragment extends Fragment
         // Set attributes
         this.reportListView.setAdapter(this.adapter);
 
-        if( MainActivity.isOfficer )    // 간부이면
+        if( (boolean) MainActivity.myInfoMap.get("officer") )    // 간부이면
             this.bottomLinearLayout.setVisibility(LinearLayout.GONE);
         else
             this.subtitleLinearLayout.setVisibility(LinearLayout.GONE);
@@ -144,19 +173,44 @@ public class ReportFragment extends Fragment
             {
                 Log.d("reportBtn", "Clicked : ");
 
-                HashMap<String, Object> map = new HashMap<> ();
+                final HashMap<String, Object> map = new HashMap<> ();
 
                 map.put("type", "일반");
-                map.put("checked", false);
-                map.put("id", "18-11222421");
-                map.put("class", "상병");
-                map.put("name", "유성우");
+                map.put("id", MainActivity.myInfoMap.get("id"));
                 map.put("reportDate", new SimpleDateFormat("yyyy.MM.dd HH:mm").format(new Date()));
                 map.put("reportContent", contentEditText.getText().toString().trim());
 
-                reportList.add(map);
+                FireStoreConnectionPool.getInstance().getDB().collection("member").whereEqualTo("id", MainActivity.myInfoMap.get("supervisor"))
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+                {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task)
+                    {
+                        if( task.isSuccessful() && !task.getResult().isEmpty() )
+                        {
+                            for (QueryDocumentSnapshot document : task.getResult())
+                            {
+                                ArrayList<HashMap<String, Object>> list = ((ArrayList<HashMap<String, Object>>) document.getData().get("report"));
+                                list.add(map);
+
+                                FireStoreConnectionPool.getInstance().getDB().collection("member").document(document.getId())
+                                        .update("report", list);
+                            }
+                        }
+                        else
+                            Toast.makeText(getContext(), "report fails", Toast.LENGTH_SHORT).show();
+
+                        map.put("class", MainActivity.myInfoMap.get("class"));
+                        map.put("name", MainActivity.myInfoMap.get("name"));
+                        reportList.add(map);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+
+
                 contentEditText.setText("");
-                adapter.notifyDataSetChanged();
+
+
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);

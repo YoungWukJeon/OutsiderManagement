@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,7 +18,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.util.HashMap;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -26,6 +28,13 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity
 {
+    public FireStoreCallbackListener fireStoreCallbackListener;
+
+    public void setFireStoreCallbackListener(FireStoreCallbackListener listener)
+    {
+        this.fireStoreCallbackListener = listener;
+    }
+
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -173,14 +182,14 @@ public class LoginActivity extends AppCompatActivity
         passwordEditText.setError(null);
 
         // Store values at the time of the login attempt.
-        String id = idAutoCompleteTextView.getText().toString();
-        String password = passwordEditText.getText().toString();
+        final String id = idAutoCompleteTextView.getText().toString();
+        final String password = passwordEditText.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password))
+        if (TextUtils.isEmpty(password) || !isPasswordValid(password))
         {
             passwordEditText.setError(getString(R.string.error_invalid_password));
             focusView = passwordEditText;
@@ -215,7 +224,90 @@ public class LoginActivity extends AppCompatActivity
 //            mAuthTask = new UserLoginTask(id, password);
 //            mAuthTask.execute((Void) null);
 
-            Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
+                this.setFireStoreCallbackListener(new FireStoreCallbackListener()
+                {
+                    final int ID_NOT_EXISTED = 0;
+                    final int PASSWORD_NOT_MATCHED = 1;
+
+                    @Override
+                    public void occurError(int errorCode)
+                    {
+                        switch (errorCode)
+                        {
+                            case ID_NOT_EXISTED:
+                                Log.d("LoginActivity", "This ID is not existed");
+                                idAutoCompleteTextView.setError("This ID is not existed");
+                                idAutoCompleteTextView.selectAll();
+                                idAutoCompleteTextView.requestFocus();
+                                break;
+                            case PASSWORD_NOT_MATCHED:
+                                Log.d("LoginActivity", "Password is not matched");
+                                passwordEditText.setError("Password is not matched");
+                                passwordEditText.selectAll();
+                                passwordEditText.requestFocus();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void doNext(Object obj)
+                    {
+                        if (obj == null)
+                            occurError(ID_NOT_EXISTED);
+                        else
+                        {
+                            MainActivity.myInfoMap = (HashMap<String, Object>) obj;
+
+                            if (password.equals(MainActivity.myInfoMap.get("password").toString().trim()))
+                            {
+                                MainActivity.myInfoMap.put("id", id);
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                finish();
+                            }
+                            else
+                                occurError(PASSWORD_NOT_MATCHED);
+                        }
+                    }
+                });
+
+                FireStoreConnectionPool.getInstance().select(this.fireStoreCallbackListener, "outsider", "member", "user", id);
+
+
+
+//            FireStoreConnectionPool.getInstance().getDB().collection("member")
+//                    .whereEqualTo("id", id).whereEqualTo("password", password).get()
+//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+//                    {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task)
+//                        {
+//                            if( task.isSuccessful() && !task.getResult().isEmpty() )
+//                            {
+//                                for( QueryDocumentSnapshot document : task.getResult() )
+//                                {
+//                                    MainActivity.myInfoMap = (HashMap<String, Object>) document.getData();
+//                                    MainActivity.document = document;
+////                                    MainActivity.myInfoMap.put("officer", document.getData().get("officer"));  // 병인지 간부인지 여부
+////                                    MainActivity.myInfoMap.put("id", document.getData().get("id"));
+////                                    MainActivity.myInfoMap.put("password", document.getData().get("password"));
+////                                    MainActivity.myInfoMap.put("from", document.getData().get("from"));
+////                                    MainActivity.myInfoMap.put("class", document.getData().get("class"));
+////                                    MainActivity.myInfoMap.put("name", document.getData().get("name"));
+////                                    MainActivity.myInfoMap.put("tel", document.getData().get("tel"));
+////                                    MainActivity.myInfoMap.put("supervisor", document.getData().get("supervisor"));
+////                                    MainActivity.myInfoMap.put("startDate", document.getData().get("startDate"));
+////                                    MainActivity.myInfoMap.put("endDate", document.getData().get("endDate"));
+//                                }
+//
+//                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+//                                finish();
+//                            }
+//                            else
+//                                Toast.makeText(getApplicationContext(), "Login Fails", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
         }
     }
 
@@ -405,5 +497,6 @@ public class LoginActivity extends AppCompatActivity
 //            showProgress(false);
 //        }
 //    }
+
 }
 

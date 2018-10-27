@@ -134,6 +134,7 @@ public class OutsiderAddDialog extends BaseDialog
                 map.put("type", getType());
                 map.put("startDate", startDateEditText.getText().toString().trim());
                 map.put("endDate", endDateEditText.getText().toString().trim());
+                map.put("outsiderDuring", map.get("startDate").toString() + " ~ " + map.get("endDate").toString());
                 map.put("outsiderReason", outsiderReasonEditText.getText().toString().trim());
 
                 Iterator<HashMap<String, Object>> iter = memberList.iterator();
@@ -146,6 +147,7 @@ public class OutsiderAddDialog extends BaseDialog
                     {
                         map.put("class", tempMap.get("class").toString().trim());
                         map.put("name", tempMap.get("name").toString().trim());
+                        map.put("checked", false);
                         break;
                     }
                 }
@@ -154,6 +156,7 @@ public class OutsiderAddDialog extends BaseDialog
                         map.get("endDate").toString() + ", " + map.get("outsiderReason").toString() + ", " +
                         map.get("class").toString() + ", " + map.get("name").toString());
 
+                updateComponentListener.updateComponent(map);
                 dismiss();
             }
         });
