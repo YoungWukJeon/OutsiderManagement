@@ -11,8 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.google.firebase.firestore.SetOptions;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -23,6 +22,13 @@ public class MyInfoFragment extends Fragment
     Button logoutBtn, modifyBtn, saveBtn, cancelBtn;
 
     HashMap<String, Object> myInfoMap;
+    private FireStoreCallbackListener fireStoreCallbackListener;
+    private LoadingDialog loadingDialog;
+
+    public void setFireStoreCallbackListener(FireStoreCallbackListener listener)
+    {
+        this.fireStoreCallbackListener = listener;
+    }
 
     @Nullable
     @Override
@@ -97,6 +103,50 @@ public class MyInfoFragment extends Fragment
         else
             this.supervisorTextView.setText("없음");
 
+        this.setFireStoreCallbackListener(new FireStoreCallbackListener()
+        {
+//            final int ID_EXISTED = 0;
+            final int TASK_FAILURE = 1;
+
+            @Override
+            public void occurError(int errorCode)
+            {
+                switch (errorCode)
+                {
+//                    case ID_EXISTED:
+//                        Log.d("RegistActivity", "This ID is existed");
+//                        Toast.makeText(getContext(), "아이디가 존재합니다.", Toast.LENGTH_SHORT).show();
+////                        idEditText.selectAll();
+////                        idEditText.requestFocus();
+//                        break;
+                    case TASK_FAILURE:
+                        Log.d("MyInfoFragment", "Task is not successful");
+                        break;
+                    default:
+                        break;
+                }
+
+                if( loadingDialog.isShowing() )
+                    loadingDialog.dismiss();
+            }
+
+            @Override
+            public void doNext(boolean isSuccesful, Object obj)
+            {
+                if( loadingDialog != null )
+                    loadingDialog.dismiss();
+
+                if( !isSuccesful )
+                {
+                    occurError(TASK_FAILURE);
+                    return;
+                }
+
+                Toast.makeText(getContext(), "정보수정완료", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         // Add Events
         this.logoutBtn.setOnClickListener(new View.OnClickListener()
         {
@@ -121,6 +171,7 @@ public class MyInfoFragment extends Fragment
                 moveTextFromTextView();
                 switchTextView(TextView.GONE);
                 switchEditText(EditText.VISIBLE);
+                logoutBtn.setVisibility(Button.GONE);
             }
         });
 
@@ -136,6 +187,7 @@ public class MyInfoFragment extends Fragment
                 moveTextFromEditText();
                 switchTextView(TextView.VISIBLE);
                 switchEditText(EditText.GONE);
+                logoutBtn.setVisibility(Button.VISIBLE);
 
 //                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 //                imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
@@ -151,6 +203,7 @@ public class MyInfoFragment extends Fragment
                 cancelBtn.setVisibility(Button.GONE);
                 switchTextView(TextView.VISIBLE);
                 switchEditText(EditText.GONE);
+                logoutBtn.setVisibility(Button.VISIBLE);
 
 //                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 //                imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
@@ -195,8 +248,13 @@ public class MyInfoFragment extends Fragment
         if( !(boolean) this.myInfoMap.get("officer") )
             this.myInfoMap.put("supervisor", this.supervisorEditText.getText().toString().trim());
 
-        FireStoreConnectionPool.getInstance().getDB().collection("member").document(MainActivity.document.getId())
-                .set(this.myInfoMap, SetOptions.merge());
+        if( loadingDialog == null )
+            loadingDialog = new LoadingDialog(getContext());
+
+        loadingDialog.show("MyInfo Updating");
+
+        FireStoreConnectionPool.getInstance().update(fireStoreCallbackListener, myInfoMap,
+                "outsider", "member", "user", MainActivity.myInfoMap.get("id").toString());
     }
 
     private void switchTextView(int visibility)

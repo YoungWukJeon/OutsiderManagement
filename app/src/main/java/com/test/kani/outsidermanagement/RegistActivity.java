@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,13 @@ public class RegistActivity extends AppCompatActivity
     Button registBtn, cancelBtn;
 
     private HashMap<String, Object> myInfoMap;
+    private FireStoreCallbackListener fireStoreCallbackListener;
+    private LoadingDialog loadingDialog;
+
+    public void setFireStoreCallbackListener(FireStoreCallbackListener listener)
+    {
+        this.fireStoreCallbackListener = listener;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,6 +54,67 @@ public class RegistActivity extends AppCompatActivity
         this.cancelBtn = findViewById(R.id.cancel_btn);
 
         // Set Attributes
+        this.setFireStoreCallbackListener(new FireStoreCallbackListener()
+        {
+            final int ID_EXISTED = 0;
+            final int TASK_FAILURE = 1;
+
+            boolean idValidate = false;
+
+            @Override
+            public void occurError(int errorCode)
+            {
+                switch (errorCode)
+                {
+                    case ID_EXISTED:
+                        Log.d("RegistActivity", "This ID is existed");
+                        Toast.makeText(getApplicationContext(), "아이디가 존재합니다.", Toast.LENGTH_SHORT).show();
+                        idEditText.selectAll();
+                        idEditText.requestFocus();
+                        break;
+                    case TASK_FAILURE:
+                        Log.d("RegistActivity", "Task is not successful");
+                        break;
+                    default:
+                        break;
+                }
+
+                if( loadingDialog.isShowing() )
+                    loadingDialog.dismiss();
+            }
+
+            @Override
+            public void doNext(boolean isSuccesful, Object obj)
+            {
+                if( !isSuccesful )
+                {
+                    occurError(TASK_FAILURE);
+                    return;
+                }
+
+                if( !idValidate && obj == null )
+                {
+                    String id = myInfoMap.get("id").toString();
+                    myInfoMap.remove("id");
+                    FireStoreConnectionPool.getInstance().insert(fireStoreCallbackListener, myInfoMap,
+                            "outsider", "member", "user", id);
+                    idValidate = true;
+                    return;
+                }
+                else if( !idValidate && obj != null )
+                {
+                    occurError(ID_EXISTED);
+                    return;
+                }
+
+                if( loadingDialog != null )
+                    loadingDialog.dismiss();
+
+                Toast.makeText(getApplicationContext(), "회원가입완료", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+
 
         // Add Events
         this.registBtn.setOnClickListener(new View.OnClickListener() {
@@ -64,6 +133,7 @@ public class RegistActivity extends AppCompatActivity
                 myInfoMap.put("tel", telEditText.getText().toString().trim());
                 myInfoMap.put("startDate", startDateEditText.getText().toString().trim());
                 myInfoMap.put("endDate", endDateEditText.getText().toString().trim());
+                myInfoMap.put("isOutsider", false);
 
                 if( !(boolean) myInfoMap.get("officer") )
                     myInfoMap.put("supervisor", supervisorEditText.getText().toString().trim());
@@ -72,8 +142,17 @@ public class RegistActivity extends AppCompatActivity
                     myInfoMap.put("supervisor", null);
                     myInfoMap.put("report", new ArrayList());
                 }
-                FireStoreConnectionPool.getInstance().getDB().collection("member").add(myInfoMap);
-                finish();
+
+                if( loadingDialog == null )
+                    loadingDialog = new LoadingDialog(RegistActivity.this);
+
+                loadingDialog.show("Regist");
+
+                FireStoreConnectionPool.getInstance().select(fireStoreCallbackListener,
+                        "outsider", "member", "user", myInfoMap.get("id").toString());
+
+//                FireStoreConnectionPool.getInstance().insert(fireStoreCallbackListener, myInfoMap,
+//                        "outsider", "member", "user", myInfoMap.get("id").toString());
             }
         });
 

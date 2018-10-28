@@ -29,6 +29,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity
 {
     public FireStoreCallbackListener fireStoreCallbackListener;
+    private LoadingDialog loadingDialog;
 
     public void setFireStoreCallbackListener(FireStoreCallbackListener listener)
     {
@@ -228,6 +229,7 @@ public class LoginActivity extends AppCompatActivity
                 {
                     final int ID_NOT_EXISTED = 0;
                     final int PASSWORD_NOT_MATCHED = 1;
+                    final int TASK_FAILURE = 2;
 
                     @Override
                     public void occurError(int errorCode)
@@ -246,14 +248,26 @@ public class LoginActivity extends AppCompatActivity
                                 passwordEditText.selectAll();
                                 passwordEditText.requestFocus();
                                 break;
+                            case TASK_FAILURE:
+                                Log.d("LoginActivity", "Task is not successful");
+                                break;
                             default:
                                 break;
                         }
                     }
 
                     @Override
-                    public void doNext(Object obj)
+                    public void doNext(boolean isSuccesful, Object obj)
                     {
+                        if( loadingDialog != null )
+                            loadingDialog.dismiss();
+
+                        if( !isSuccesful )
+                        {
+                            occurError(TASK_FAILURE);
+                            return;
+                        }
+
                         if (obj == null)
                             occurError(ID_NOT_EXISTED);
                         else
@@ -267,47 +281,19 @@ public class LoginActivity extends AppCompatActivity
                                 finish();
                             }
                             else
+                            {
                                 occurError(PASSWORD_NOT_MATCHED);
+                                MainActivity.myInfoMap = null;
+                            }
                         }
                     }
                 });
 
-                FireStoreConnectionPool.getInstance().select(this.fireStoreCallbackListener, "outsider", "member", "user", id);
+                if( this.loadingDialog == null )
+                    this.loadingDialog = new LoadingDialog(this);
 
-
-
-//            FireStoreConnectionPool.getInstance().getDB().collection("member")
-//                    .whereEqualTo("id", id).whereEqualTo("password", password).get()
-//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
-//                    {
-//                        @Override
-//                        public void onComplete(@NonNull Task<QuerySnapshot> task)
-//                        {
-//                            if( task.isSuccessful() && !task.getResult().isEmpty() )
-//                            {
-//                                for( QueryDocumentSnapshot document : task.getResult() )
-//                                {
-//                                    MainActivity.myInfoMap = (HashMap<String, Object>) document.getData();
-//                                    MainActivity.document = document;
-////                                    MainActivity.myInfoMap.put("officer", document.getData().get("officer"));  // 병인지 간부인지 여부
-////                                    MainActivity.myInfoMap.put("id", document.getData().get("id"));
-////                                    MainActivity.myInfoMap.put("password", document.getData().get("password"));
-////                                    MainActivity.myInfoMap.put("from", document.getData().get("from"));
-////                                    MainActivity.myInfoMap.put("class", document.getData().get("class"));
-////                                    MainActivity.myInfoMap.put("name", document.getData().get("name"));
-////                                    MainActivity.myInfoMap.put("tel", document.getData().get("tel"));
-////                                    MainActivity.myInfoMap.put("supervisor", document.getData().get("supervisor"));
-////                                    MainActivity.myInfoMap.put("startDate", document.getData().get("startDate"));
-////                                    MainActivity.myInfoMap.put("endDate", document.getData().get("endDate"));
-//                                }
-//
-//                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-//                                finish();
-//                            }
-//                            else
-//                                Toast.makeText(getApplicationContext(), "Login Fails", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
+                this.loadingDialog.show("Login");
+                FireStoreConnectionPool.getInstance().select(fireStoreCallbackListener, "outsider", "member", "user", id);
         }
     }
 
