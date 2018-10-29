@@ -97,7 +97,7 @@ public class RegistActivity extends AppCompatActivity
                     String id = myInfoMap.get("id").toString();
                     myInfoMap.remove("id");
                     FireStoreConnectionPool.getInstance().insert(fireStoreCallbackListener, myInfoMap,
-                            "outsider", "member", "user", id);
+                            "member", id);
                     idValidate = true;
                     return;
                 }
@@ -136,10 +136,10 @@ public class RegistActivity extends AppCompatActivity
                 myInfoMap.put("isOutsider", false);
 
                 if( !(boolean) myInfoMap.get("officer") )
-                    myInfoMap.put("supervisor", supervisorEditText.getText().toString().trim());
+                    myInfoMap.put("supervisorId", supervisorEditText.getText().toString().trim());
                 else
                 {
-                    myInfoMap.put("supervisor", null);
+                    myInfoMap.put("supervisorId", null);
                     myInfoMap.put("report", new ArrayList());
                 }
 
@@ -148,8 +148,8 @@ public class RegistActivity extends AppCompatActivity
 
                 loadingDialog.show("Regist");
 
-                FireStoreConnectionPool.getInstance().select(fireStoreCallbackListener,
-                        "outsider", "member", "user", myInfoMap.get("id").toString());
+                FireStoreConnectionPool.getInstance().selectOne(fireStoreCallbackListener,
+                        "member", myInfoMap.get("id").toString());
 
 //                FireStoreConnectionPool.getInstance().insert(fireStoreCallbackListener, myInfoMap,
 //                        "outsider", "member", "user", myInfoMap.get("id").toString());

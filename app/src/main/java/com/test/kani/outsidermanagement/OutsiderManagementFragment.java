@@ -13,9 +13,14 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 public class OutsiderManagementFragment extends Fragment
 {
@@ -25,6 +30,15 @@ public class OutsiderManagementFragment extends Fragment
     FloatingActionButton addFloatingBtn, removeFloatingBtn;
 
     private ArrayList<HashMap<String, Object>> outsiderManagementList;
+    private FireStoreCallbackListener fireStoreCallbackListener;
+    private LoadingDialog loadingDialog;
+
+    public void setFireStoreCallbackListener(FireStoreCallbackListener listener)
+    {
+        this.fireStoreCallbackListener = listener;
+    }
+
+    View view;
 
     private BaseDialog dialog;
 
@@ -35,11 +49,10 @@ public class OutsiderManagementFragment extends Fragment
     {
         this.initOutsiderManagementList();
 
-        View view = inflater.inflate(R.layout.fragment_outsider_management, container, false);
+        this.view = inflater.inflate(R.layout.fragment_outsider_management, container, false);
 
-        this.bindUI(view);
         // Inflate the layout for this fragment
-        return view;
+        return this.view;
     }
 
     private void initOutsiderManagementList()
@@ -48,61 +61,154 @@ public class OutsiderManagementFragment extends Fragment
 
         this.outsiderManagementList = new ArrayList<> ();
 
-        HashMap<String, Object> temp1 = new HashMap<> ();
-        HashMap<String, Object> temp2 = new HashMap<> ();
-        HashMap<String, Object> temp3 = new HashMap<> ();
-        HashMap<String, Object> temp4 = new HashMap<> ();
-        HashMap<String, Object> temp5 = new HashMap<> ();
-        HashMap<String, Object> temp6 = new HashMap<> ();
+        if( loadingDialog == null )
+            loadingDialog = new LoadingDialog(getContext());
 
-        temp1.put("type", "일반");
-        temp1.put("checked", false);
-        temp1.put("class", "상병");
-        temp1.put("name", "유성우");
-        temp1.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
-        temp1.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+        loadingDialog.show("OutsiderManagement Loading");
 
-        temp2.put("type", "관심");
-        temp2.put("checked", false);
-        temp2.put("class", "병장");
-        temp2.put("name", "유성우");
-        temp2.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
-        temp2.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+        this.setFireStoreCallbackListener(new FireStoreCallbackListener()
+        {
+            //            final int ID_EXISTED = 0;
+            final int TASK_FAILURE = 1;
 
-        temp3.put("type", "배려");
-        temp3.put("checked", true);
-        temp3.put("class", "병장");
-        temp3.put("name", "유성우");
-        temp3.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
-        temp3.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+            @Override
+            public void occurError(int errorCode)
+            {
+                switch (errorCode)
+                {
+//                    case ID_EXISTED:
+//                        Log.d("RegistActivity", "This ID is existed");
+//                        Toast.makeText(getContext(), "아이디가 존재합니다.", Toast.LENGTH_SHORT).show();
+////                        idEditText.selectAll();
+////                        idEditText.requestFocus();
+//                        break;
+                    case TASK_FAILURE:
+                        Log.d("OutManagementFragment", "Task is not successful");
+                        break;
+                    default:
+                        break;
+                }
 
-        temp4.put("type", "배려");
-        temp4.put("checked", true);
-        temp4.put("class", "일병");
-        temp4.put("name", "유성우");
-        temp4.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
-        temp4.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+                if( loadingDialog.isShowing() )
+                    loadingDialog.dismiss();
+            }
 
-        temp5.put("type", "일반");
-        temp5.put("checked", false);
-        temp5.put("class", "이병");
-        temp5.put("name", "유성우");
-        temp5.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
-        temp5.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+            @Override
+            public void doNext(boolean isSuccesful, Object obj)
+            {
+                if (loadingDialog != null && loadingDialog.isShowing())
+                    loadingDialog.dismiss();
 
-        temp6.put("type", "관심");
-        temp6.put("checked", true);
-        temp6.put("class", "이병");
-        temp6.put("name", "유성우");
-        temp6.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
-        temp6.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+                if (!isSuccesful)
+                {
+                    occurError(TASK_FAILURE);
+                    return;
+                }
 
-        this.outsiderManagementList.add(temp1);
-        this.outsiderManagementList.add(temp2);
-        this.outsiderManagementList.add(temp3);
-        this.outsiderManagementList.add(temp4);
-        this.outsiderManagementList.add(temp5);
-        this.outsiderManagementList.add(temp6);
+                if (obj == null)
+                {
+                    Log.d("OutManagementFragment", "outsider history is not found");
+                    outsiderManagementList = new ArrayList<>();
+                }
+                else
+                {
+                    outsiderManagementList = (ArrayList<HashMap<String, Object>>) obj;
+
+                    for( HashMap<String, Object> map : outsiderManagementList )
+                    {
+                        Set<String> keys = map.keySet();
+                        Iterator<String> iter = keys.iterator();
+
+                        while( iter.hasNext() )
+                        {
+                            String key = iter.next();
+
+                            if( map.get(key) == null )
+                                map.put(key, "");
+                        }
+
+                        map.put("checked", false);
+                        map.put("outsiderDuring", map.get("startDate").toString() + " ~ " + map.get("endDate").toString());
+                    }
+                }
+                Collections.sort(outsiderManagementList, new Comparator<HashMap<String, Object>>()
+                {
+                    @Override
+                    public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2)
+                    {
+                        return -o1.get("reportDate").toString().compareTo(o2.get("reportDate").toString());
+                    }
+                });
+
+                bindUI(view);
+            }
+        });
+
+        FireStoreConnectionPool.getInstance().selectBetweenDate(fireStoreCallbackListener,
+                "outsider", "supervisorId", MainActivity.myInfoMap.get("id").toString(),
+                "startDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
+                "endDate", "9999-12-31");
+
+
+
+
+
+
+//        HashMap<String, Object> temp1 = new HashMap<> ();
+//        HashMap<String, Object> temp2 = new HashMap<> ();
+//        HashMap<String, Object> temp3 = new HashMap<> ();
+//        HashMap<String, Object> temp4 = new HashMap<> ();
+//        HashMap<String, Object> temp5 = new HashMap<> ();
+//        HashMap<String, Object> temp6 = new HashMap<> ();
+//
+//        temp1.put("type", "일반");
+//        temp1.put("checked", false);
+//        temp1.put("class", "상병");
+//        temp1.put("name", "유성우");
+//        temp1.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
+//        temp1.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+//
+//        temp2.put("type", "관심");
+//        temp2.put("checked", false);
+//        temp2.put("class", "병장");
+//        temp2.put("name", "유성우");
+//        temp2.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
+//        temp2.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+//
+//        temp3.put("type", "배려");
+//        temp3.put("checked", true);
+//        temp3.put("class", "병장");
+//        temp3.put("name", "유성우");
+//        temp3.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
+//        temp3.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+//
+//        temp4.put("type", "배려");
+//        temp4.put("checked", true);
+//        temp4.put("class", "일병");
+//        temp4.put("name", "유성우");
+//        temp4.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
+//        temp4.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+//
+//        temp5.put("type", "일반");
+//        temp5.put("checked", false);
+//        temp5.put("class", "이병");
+//        temp5.put("name", "유성우");
+//        temp5.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
+//        temp5.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+//
+//        temp6.put("type", "관심");
+//        temp6.put("checked", true);
+//        temp6.put("class", "이병");
+//        temp6.put("name", "유성우");
+//        temp6.put("outsiderDuring", "2018.10.10 ~ 2018.10.23");    // currentTimeMillis로 바꿀예정
+//        temp6.put("outsiderReason", "정기 휴가 9일 + 혹한기 유공 4일");
+//
+//        this.outsiderManagementList.add(temp1);
+//        this.outsiderManagementList.add(temp2);
+//        this.outsiderManagementList.add(temp3);
+//        this.outsiderManagementList.add(temp4);
+//        this.outsiderManagementList.add(temp5);
+//        this.outsiderManagementList.add(temp6);
     }
 
     private void bindUI(View view)

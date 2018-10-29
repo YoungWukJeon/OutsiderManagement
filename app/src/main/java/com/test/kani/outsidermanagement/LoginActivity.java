@@ -105,6 +105,9 @@ public class LoginActivity extends AppCompatActivity
             }
         });
 
+//        FireStoreConnectionPool.getInstance().selectOnce(fireStoreCallbackListener, "test", "17-12345678", "2018-10-10");
+//        FireStoreConnectionPool.getInstance().selectOnce(fireStoreCallbackListener, "test", "17-12345678", "2018-10-25");
+
 //        mLoginFormView = findViewById(R.id.login_form);
 //        mProgressView = findViewById(R.id.login_progress);
     }
@@ -225,75 +228,82 @@ public class LoginActivity extends AppCompatActivity
 //            mAuthTask = new UserLoginTask(id, password);
 //            mAuthTask.execute((Void) null);
 
-                this.setFireStoreCallbackListener(new FireStoreCallbackListener()
-                {
-                    final int ID_NOT_EXISTED = 0;
-                    final int PASSWORD_NOT_MATCHED = 1;
-                    final int TASK_FAILURE = 2;
+            this.setFireStoreCallbackListener(new FireStoreCallbackListener()
+            {
+                final int ID_NOT_EXISTED = 0;
+                final int PASSWORD_NOT_MATCHED = 1;
+                final int TASK_FAILURE = 2;
 
-                    @Override
-                    public void occurError(int errorCode)
+                @Override
+                public void occurError(int errorCode)
+                {
+                    switch (errorCode)
                     {
-                        switch (errorCode)
-                        {
-                            case ID_NOT_EXISTED:
-                                Log.d("LoginActivity", "This ID is not existed");
-                                idAutoCompleteTextView.setError("This ID is not existed");
-                                idAutoCompleteTextView.selectAll();
-                                idAutoCompleteTextView.requestFocus();
-                                break;
-                            case PASSWORD_NOT_MATCHED:
-                                Log.d("LoginActivity", "Password is not matched");
-                                passwordEditText.setError("Password is not matched");
-                                passwordEditText.selectAll();
-                                passwordEditText.requestFocus();
-                                break;
-                            case TASK_FAILURE:
-                                Log.d("LoginActivity", "Task is not successful");
-                                break;
-                            default:
-                                break;
-                        }
+                        case ID_NOT_EXISTED:
+                            Log.d("LoginActivity", "This ID is not existed");
+                            idAutoCompleteTextView.setError("This ID is not existed");
+                            idAutoCompleteTextView.selectAll();
+                            idAutoCompleteTextView.requestFocus();
+                            break;
+                        case PASSWORD_NOT_MATCHED:
+                            Log.d("LoginActivity", "Password is not matched");
+                            passwordEditText.setError("Password is not matched");
+                            passwordEditText.selectAll();
+                            passwordEditText.requestFocus();
+                            break;
+                        case TASK_FAILURE:
+                            Log.d("LoginActivity", "Task is not successful");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                @Override
+                public void doNext(boolean isSuccesful, Object obj)
+                {
+                    if( loadingDialog != null )
+                        loadingDialog.dismiss();
+
+                    if( !isSuccesful )
+                    {
+                        occurError(TASK_FAILURE);
+                        return;
                     }
 
-                    @Override
-                    public void doNext(boolean isSuccesful, Object obj)
+//                Log.d("class", ((HashMap<String, Object>) obj).get("class").toString());
+//                Log.d("name", ((HashMap<String, Object>) obj).get("name").toString());
+//                Log.d("supervisorId", ((HashMap<String, Object>) obj).get("supervisorId").toString());
+//                Log.d("outsider:content", (  ((HashMap<String, Object>)((HashMap<String, Object>) obj).get("outsider")).get("content").toString() )    );
+//                Log.d("report:content", (  ((HashMap<String, Object>)((HashMap<String, Object>) obj).get("report")).get("content")) + ""    );
+
+                    if (obj == null)
+                        occurError(ID_NOT_EXISTED);
+                    else
                     {
-                        if( loadingDialog != null )
-                            loadingDialog.dismiss();
+                        MainActivity.myInfoMap = (HashMap<String, Object>) obj;
 
-                        if( !isSuccesful )
+                        if (password.equals(MainActivity.myInfoMap.get("password").toString().trim()))
                         {
-                            occurError(TASK_FAILURE);
-                            return;
+                            MainActivity.myInfoMap.put("id", id);
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
                         }
-
-                        if (obj == null)
-                            occurError(ID_NOT_EXISTED);
                         else
                         {
-                            MainActivity.myInfoMap = (HashMap<String, Object>) obj;
-
-                            if (password.equals(MainActivity.myInfoMap.get("password").toString().trim()))
-                            {
-                                MainActivity.myInfoMap.put("id", id);
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                finish();
-                            }
-                            else
-                            {
-                                occurError(PASSWORD_NOT_MATCHED);
-                                MainActivity.myInfoMap = null;
-                            }
+                            occurError(PASSWORD_NOT_MATCHED);
+                            MainActivity.myInfoMap = null;
                         }
                     }
-                });
+                }
+            });
+
 
                 if( this.loadingDialog == null )
                     this.loadingDialog = new LoadingDialog(this);
 
                 this.loadingDialog.show("Login");
-                FireStoreConnectionPool.getInstance().select(fireStoreCallbackListener, "outsider", "member", "user", id);
+                FireStoreConnectionPool.getInstance().selectOne(fireStoreCallbackListener, "member", id);
         }
     }
 
@@ -307,7 +317,7 @@ public class LoginActivity extends AppCompatActivity
     private boolean isPasswordValid(String password)
     {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 2;
     }
 //
 //    /**

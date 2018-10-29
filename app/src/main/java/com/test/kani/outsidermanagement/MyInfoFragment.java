@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -99,13 +98,13 @@ public class MyInfoFragment extends Fragment
         this.endDateTextView.setText(this.myInfoMap.get("endDate").toString().trim());
 
         if( !(boolean) this.myInfoMap.get("officer") )
-            this.supervisorTextView.setText(this.myInfoMap.get("supervisor").toString().trim());
+            this.supervisorTextView.setText(this.myInfoMap.get("supervisorId").toString().trim());
         else
             this.supervisorTextView.setText("없음");
 
         this.setFireStoreCallbackListener(new FireStoreCallbackListener()
         {
-//            final int ID_EXISTED = 0;
+            //            final int ID_EXISTED = 0;
             final int TASK_FAILURE = 1;
 
             @Override
@@ -113,12 +112,12 @@ public class MyInfoFragment extends Fragment
             {
                 switch (errorCode)
                 {
-//                    case ID_EXISTED:
-//                        Log.d("RegistActivity", "This ID is existed");
-//                        Toast.makeText(getContext(), "아이디가 존재합니다.", Toast.LENGTH_SHORT).show();
-////                        idEditText.selectAll();
-////                        idEditText.requestFocus();
-//                        break;
+    //                    case ID_EXISTED:
+    //                        Log.d("RegistActivity", "This ID is existed");
+    //                        Toast.makeText(getContext(), "아이디가 존재합니다.", Toast.LENGTH_SHORT).show();
+    ////                        idEditText.selectAll();
+    ////                        idEditText.requestFocus();
+    //                        break;
                     case TASK_FAILURE:
                         Log.d("MyInfoFragment", "Task is not successful");
                         break;
@@ -142,7 +141,7 @@ public class MyInfoFragment extends Fragment
                     return;
                 }
 
-                Toast.makeText(getContext(), "정보수정완료", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "정보수정완료", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -254,7 +253,14 @@ public class MyInfoFragment extends Fragment
         loadingDialog.show("MyInfo Updating");
 
         FireStoreConnectionPool.getInstance().update(fireStoreCallbackListener, myInfoMap,
-                "outsider", "member", "user", MainActivity.myInfoMap.get("id").toString());
+                "member", MainActivity.myInfoMap.get("id").toString());
+
+        FireStoreConnectionPool.getInstance().updateBatch(fireStoreCallbackListener,
+                "report", "memberId", MainActivity.myInfoMap.get("id").toString(),
+                "class", MainActivity.myInfoMap.get("class").toString(),
+                "name", MainActivity.myInfoMap.get("name").toString());
+
+
     }
 
     private void switchTextView(int visibility)

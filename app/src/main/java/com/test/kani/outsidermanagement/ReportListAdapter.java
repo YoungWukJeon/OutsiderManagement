@@ -84,8 +84,9 @@ public class ReportListAdapter extends BaseAdapter
             this.subtitleLinearLayout.setVisibility(LinearLayout.GONE);
         else
         {
+            this.subtitleLinearLayout.setVisibility(LinearLayout.VISIBLE);
             this.classTextView.setText(this.list.get(i).get("class").toString().trim());
-            this.idTextView.setText(this.list.get(i).get("id").toString().trim());
+            this.idTextView.setText(this.list.get(i).get("memberId").toString().trim());
             this.nameTextView.setText(this.list.get(i).get("name").toString().trim());
         }
 

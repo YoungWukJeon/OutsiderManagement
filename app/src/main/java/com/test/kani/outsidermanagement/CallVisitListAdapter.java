@@ -88,9 +88,9 @@ public class CallVisitListAdapter extends BaseAdapter
             @Override
             public void onClick(View v)
             {
-                Log.d("telImageButton", "Clicked : ");
+                Log.d("telImageButton", "Clicked : " + list.get(i).get("tel").toString());
 
-                Intent intent  = new Intent(Intent.ACTION_DIAL, Uri.parse("tel: " + list.get(i).get("tel")));
+                Intent intent  = new Intent(Intent.ACTION_DIAL, Uri.parse("tel: " + list.get(i).get("tel").toString()));
 
                 context.startActivity(intent);
             }

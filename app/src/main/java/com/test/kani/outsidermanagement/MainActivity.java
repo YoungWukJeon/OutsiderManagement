@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
                     selectedFragment = new CallVisitFragment();
                     if( !(boolean) MainActivity.myInfoMap.get("officer") )
                     {
-                        Toast.makeText(getApplicationContext(), "용사는 이용할 수 없는 서비스이다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "용사는 이용할 수 없는 서비스입니다.", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                     break;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity
                     selectedFragment = new OutsiderManagementFragment();
                     if( !(boolean) MainActivity.myInfoMap.get("officer") )
                     {
-                        Toast.makeText(getApplicationContext(), "용사는 이용할 수 없는 서비스이다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "용사는 이용할 수 없는 서비스입니다.", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                     break;
