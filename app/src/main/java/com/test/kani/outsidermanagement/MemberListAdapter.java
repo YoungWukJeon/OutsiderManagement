@@ -68,7 +68,7 @@ public class MemberListAdapter extends BaseAdapter
             this.memberItemLinearLayout.setBackgroundColor(Color.TRANSPARENT);
 
         this.classTextView.setText(this.list.get(i).get("class").toString().trim());
-        this.idTextView.setText(this.list.get(i).get("id").toString().trim());
+        this.idTextView.setText(this.list.get(i).get("documentId").toString().trim());
         this.nameTextView.setText(this.list.get(i).get("name").toString().trim());
 
         // Add Events

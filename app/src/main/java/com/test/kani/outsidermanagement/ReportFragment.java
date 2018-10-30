@@ -130,15 +130,6 @@ public class ReportFragment extends Fragment
         else
             FireStoreConnectionPool.getInstance().select(fireStoreCallbackListener,
                     "report", "memberId", MainActivity.myInfoMap.get("id").toString());
-
-
-//        temp1.put("type", "관심");
-//        temp1.put("checked", false);
-//        temp1.put("id", "18-11222421");
-//        temp1.put("class", "상병");
-//        temp1.put("name", "유성우");
-//        temp1.put("reportDate", "2018.10.13 21:07");
-//        temp1.put("reportContent", "현재 속초 앞바다에 있습니다. 이상 없습니다!");
     }
 
     private void bindUI(View view)
@@ -198,6 +189,7 @@ public class ReportFragment extends Fragment
                 Log.d("reportBtn", "Clicked : ");
 
                 final HashMap<String, Object> map = new HashMap<> ();
+                String now = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
 
                 map.put("type", "배려");
 //                map.put("type", MainActivity.myInfoMap.get("type"));
@@ -205,7 +197,7 @@ public class ReportFragment extends Fragment
                 map.put("supervisorId", MainActivity.myInfoMap.get("supervisorId"));
                 map.put("class", MainActivity.myInfoMap.get("class"));
                 map.put("name", MainActivity.myInfoMap.get("name"));
-                map.put("reportDate", new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()));
+                map.put("reportDate", now);
                 map.put("reportContent", contentEditText.getText().toString().trim());
 
                 contentEditText.setText("");
@@ -213,7 +205,11 @@ public class ReportFragment extends Fragment
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
 
+                loadingDialog.show("Reporting now");
+
                 FireStoreConnectionPool.getInstance().insertNoID(fireStoreCallbackListener, map, "report");
+                FireStoreConnectionPool.getInstance().updateOne(fireStoreCallbackListener, "outsider",
+                        "memberId", MainActivity.myInfoMap.get("id").toString(), "startDate", "endDate", "reportDate", now);
 
                 reportList.add(map);
                 adapter.notifyDataSetChanged();

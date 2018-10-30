@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MyInfoFragment extends Fragment
 {
@@ -46,18 +47,9 @@ public class MyInfoFragment extends Fragment
     private void initMyInfo()
     {
         Log.d("MyInfoFragment", "Initialize my info");
-        this.myInfoMap = MainActivity.myInfoMap;
-
-//        this.myInfoMap.put("officer", true);  // 병인지 간부인지 여부
-//        this.myInfoMap.put("id", "18-00001");
-//        this.myInfoMap.put("password", "1q2w3e4r!!");
-//        this.myInfoMap.put("from", "111연대 통신중대");
-//        this.myInfoMap.put("class", "소위");
-//        this.myInfoMap.put("name", "아무개");
-//        this.myInfoMap.put("tel", "010-1234-5678");
-//        this.myInfoMap.put("supervisor", "없음");
-//        this.myInfoMap.put("startDate", "2018-03-02");
-//        this.myInfoMap.put("endDate", "2020-06-30");
+        this.myInfoMap = new HashMap<> ();
+        this.myInfoMap.putAll(MainActivity.myInfoMap);
+        this.myInfoMap.remove("id");
     }
 
     private void bindUI(View view)
@@ -88,7 +80,7 @@ public class MyInfoFragment extends Fragment
         this.cancelBtn = view.findViewById(R.id.cancel_btn);
 
         // Set Attributes
-        this.idTextView.setText(this.myInfoMap.get("id").toString().trim());
+        this.idTextView.setText(MainActivity.myInfoMap.get("id").toString().trim());
         this.passwordTextView.setText(this.myInfoMap.get("password").toString().trim());
         this.fromTextView.setText(this.myInfoMap.get("from").toString().trim());
         this.classTextView.setText(this.myInfoMap.get("class").toString().trim());
@@ -236,6 +228,11 @@ public class MyInfoFragment extends Fragment
 
     private void changeMyInfo()
     {
+        if( loadingDialog == null )
+            loadingDialog = new LoadingDialog(getContext());
+
+        loadingDialog.show("MyInfo Updating");
+
         this.myInfoMap.put("password", this.passwordEditText.getText().toString().trim());
         this.myInfoMap.put("from", this.fromEditText.getText().toString().trim());
         this.myInfoMap.put("class", this.classEditText.getText().toString().trim());
@@ -244,22 +241,25 @@ public class MyInfoFragment extends Fragment
         this.myInfoMap.put("startDate", this.startDateEditText.getText().toString().trim());
         this.myInfoMap.put("endDate", this.endDateEditText.getText().toString().trim());
 
+        Map<String, Object> map = new HashMap<> ();
+        map.put("class", MainActivity.myInfoMap.get("class").toString());
+        map.put("name", MainActivity.myInfoMap.get("name").toString());
+
         if( !(boolean) this.myInfoMap.get("officer") )
-            this.myInfoMap.put("supervisor", this.supervisorEditText.getText().toString().trim());
-
-        if( loadingDialog == null )
-            loadingDialog = new LoadingDialog(getContext());
-
-        loadingDialog.show("MyInfo Updating");
+        {
+            this.myInfoMap.put("supervisorId", this.supervisorEditText.getText().toString().trim());
+            map.put("supervisorId", MainActivity.myInfoMap.get("supervisorId").toString());
+            map.put("tel", MainActivity.myInfoMap.get("tel").toString());
+        }
 
         FireStoreConnectionPool.getInstance().update(fireStoreCallbackListener, myInfoMap,
                 "member", MainActivity.myInfoMap.get("id").toString());
 
-        FireStoreConnectionPool.getInstance().updateBatch(fireStoreCallbackListener,
-                "report", "memberId", MainActivity.myInfoMap.get("id").toString(),
-                "class", MainActivity.myInfoMap.get("class").toString(),
-                "name", MainActivity.myInfoMap.get("name").toString());
+        FireStoreConnectionPool.getInstance().updateBatch(fireStoreCallbackListener, map,
+                "report", "memberId", MainActivity.myInfoMap.get("id").toString());
 
+        FireStoreConnectionPool.getInstance().updateBatch(fireStoreCallbackListener, map,
+                "outsider", "memberId", MainActivity.myInfoMap.get("id").toString());
 
     }
 

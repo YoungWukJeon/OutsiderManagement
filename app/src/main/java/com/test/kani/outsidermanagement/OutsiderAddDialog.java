@@ -9,10 +9,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 public class OutsiderAddDialog extends BaseDialog
 {
@@ -24,6 +28,15 @@ public class OutsiderAddDialog extends BaseDialog
     MemberListAdapter adapter;
     private Context context;
     private ArrayList<HashMap<String, Object>> memberList;
+    private FireStoreCallbackListener fireStoreCallbackListener;
+    private LoadingDialog loadingDialog;
+
+    private HashMap<String, Object> addFactorMap;
+
+    public void setFireStoreCallbackListener(FireStoreCallbackListener listener)
+    {
+        this.fireStoreCallbackListener = listener;
+    }
 
 
     public OutsiderAddDialog(Context context, int themeResId)
@@ -44,49 +57,99 @@ public class OutsiderAddDialog extends BaseDialog
         Log.d("OutsiderAddDialog", "Initialize member list");
         this.memberList = new ArrayList<>();
 
-        HashMap<String, Object> temp1 = new HashMap<> ();
-        HashMap<String, Object> temp2 = new HashMap<> ();
-        HashMap<String, Object> temp3 = new HashMap<> ();
-        HashMap<String, Object> temp4 = new HashMap<> ();
-        HashMap<String, Object> temp5 = new HashMap<> ();
-        HashMap<String, Object> temp6 = new HashMap<> ();
+        if( loadingDialog == null )
+            loadingDialog = new LoadingDialog(getContext());
 
-        temp1.put("class", "상병");
-        temp1.put("id", "17-72001242");
-        temp1.put("name", "유성우");
-        temp1.put("checked", false);
+        loadingDialog.show("MemberList Loading");
 
-        temp2.put("class", "병장");
-        temp2.put("id", "17-72001242");
-        temp2.put("name", "폭풍우");
-        temp2.put("checked", false);
+        this.setFireStoreCallbackListener(new FireStoreCallbackListener()
+        {
+            //            final int ID_EXISTED = 0;
+            final int TASK_FAILURE = 1;
 
-        temp3.put("class", "상병");
-        temp3.put("id", "17-72001242");
-        temp3.put("name", "유성우");
-        temp3.put("checked", false);
+            @Override
+            public void occurError(int errorCode)
+            {
+                switch (errorCode)
+                {
+//                    case ID_EXISTED:
+//                        Log.d("RegistActivity", "This ID is existed");
+//                        Toast.makeText(getContext(), "아이디가 존재합니다.", Toast.LENGTH_SHORT).show();
+////                        idEditText.selectAll();
+////                        idEditText.requestFocus();
+//                        break;
+                    case TASK_FAILURE:
+                        Log.d("OutsiderAddDialog", "Task is not successful");
+                        break;
+                    default:
+                        break;
+                }
 
-        temp4.put("class", "일병");
-        temp4.put("id", "17-72001242");
-        temp4.put("name", "빛돌");
-        temp4.put("checked", false);
+                if( loadingDialog.isShowing() )
+                    loadingDialog.dismiss();
+            }
 
-        temp5.put("class", "이병");
-        temp5.put("id", "17-72001242");
-        temp5.put("name", "구운몽");
-        temp5.put("checked", false);
+            @Override
+            public void doNext(boolean isSuccesful, Object obj)
+            {
+                if (loadingDialog != null && loadingDialog.isShowing())
+                    loadingDialog.dismiss();
 
-        temp6.put("class", "이병");
-        temp6.put("id", "17-72001242");
-        temp6.put("name", "아무개");
-        temp6.put("checked", false);
+                if (!isSuccesful)
+                {
+                    occurError(TASK_FAILURE);
+                    return;
+                }
 
-        this.memberList.add(temp1);
-        this.memberList.add(temp2);
-        this.memberList.add(temp3);
-        this.memberList.add(temp4);
-        this.memberList.add(temp5);
-        this.memberList.add(temp6);
+                if (obj == null)
+                {
+                    Log.d("OutsiderAddDialog", "memberList is not found");
+                    memberList = new ArrayList<>();
+                }
+                else if( obj != null && obj instanceof  String )
+                {
+                    addFactorMap.put("documentId", obj.toString());
+                    addFactorMap.put("outsiderDuring", addFactorMap.get("startDate").toString() + " ~ "
+                            + addFactorMap.get("endDate").toString());
+                    addFactorMap.put("checked", false);
+                    updateComponentListener.updateComponent(addFactorMap);
+                    dismiss();
+                }
+                else
+                {
+                    memberList = (ArrayList<HashMap<String, Object>>) obj;
+
+                    for( HashMap<String, Object> map : memberList )
+                    {
+                        Set<String> keys = map.keySet();
+                        Iterator<String> iter = keys.iterator();
+
+                        while( iter.hasNext() )
+                        {
+                            String key = iter.next();
+
+                            if( map.get(key) == null )
+                                map.put(key, "");
+                        }
+
+                        map.put("checked", false);
+                    }
+                }
+                Collections.sort(memberList, new Comparator<HashMap<String, Object>>()
+                {
+                    @Override
+                    public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2)
+                    {
+                        return o1.get("name").toString().compareTo(o2.get("name").toString());
+                    }
+                });
+
+                bindUI();
+            }
+        });
+
+        FireStoreConnectionPool.getInstance().select(fireStoreCallbackListener,
+                "member", "supervisorId", MainActivity.myInfoMap.get("id").toString());
     }
 
     private void bindUI()
@@ -110,16 +173,24 @@ public class OutsiderAddDialog extends BaseDialog
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                for( int i = 0; i < memberList.size(); ++i )
+                if( (boolean) memberList.get(position).get("checked") )
                 {
-                    if( parent.getChildAt(i) != null )
-                        parent.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-
-                    memberList.get(i).put("checked", false);
+                    memberList.get(position).put("checked", false);
+                    view.setBackgroundColor(Color.TRANSPARENT);
                 }
+                else
+                {
+                    for (int i = 0; i < memberList.size(); ++i)
+                    {
+                        if (parent.getChildAt(i) != null)
+                            parent.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
 
-                memberList.get(position).put("checked", true);
-                view.setBackgroundColor(Color.parseColor("#FFF2CC"));
+                        memberList.get(i).put("checked", false);
+                    }
+
+                    memberList.get(position).put("checked", true);
+                    view.setBackgroundColor(Color.parseColor("#FFF2CC"));
+                }
             }
         });
 
@@ -130,12 +201,15 @@ public class OutsiderAddDialog extends BaseDialog
             {
                 Log.d("registBtn", "Clicked : ");
 
-                HashMap<String, Object> map = new HashMap<> ();
-                map.put("type", getType());
-                map.put("startDate", startDateEditText.getText().toString().trim());
-                map.put("endDate", endDateEditText.getText().toString().trim());
-                map.put("outsiderDuring", map.get("startDate").toString() + " ~ " + map.get("endDate").toString());
-                map.put("outsiderReason", outsiderReasonEditText.getText().toString().trim());
+                loadingDialog.show("Outsider Adding");
+
+                addFactorMap = new HashMap<> ();
+
+                addFactorMap.put("type", getType());
+                addFactorMap.put("startDate", startDateEditText.getText().toString().trim());
+                addFactorMap.put("endDate", endDateEditText.getText().toString().trim());
+                addFactorMap.put("outsiderReason", outsiderReasonEditText.getText().toString().trim());
+                addFactorMap.put("reportDate", null);
 
                 Iterator<HashMap<String, Object>> iter = memberList.iterator();
 
@@ -145,19 +219,22 @@ public class OutsiderAddDialog extends BaseDialog
 
                     if( (boolean) tempMap.get("checked") )
                     {
-                        map.put("class", tempMap.get("class").toString().trim());
-                        map.put("name", tempMap.get("name").toString().trim());
-                        map.put("checked", false);
+                        addFactorMap.put("class", tempMap.get("class").toString().trim());
+                        addFactorMap.put("name", tempMap.get("name").toString().trim());
+                        addFactorMap.put("memberId", tempMap.get("documentId").toString().trim());
+                        addFactorMap.put("tel", tempMap.get("tel").toString().trim());
+                        addFactorMap.put("supervisorId", MainActivity.myInfoMap.get("id").toString());
                         break;
                     }
                 }
 
-                Log.d("Regist Member", map.get("type").toString() + ", " + map.get("startDate").toString() + ", " +
-                        map.get("endDate").toString() + ", " + map.get("outsiderReason").toString() + ", " +
-                        map.get("class").toString() + ", " + map.get("name").toString());
-
-                updateComponentListener.updateComponent(map);
-                dismiss();
+                if( addFactorMap.containsKey("memberId") )
+                    FireStoreConnectionPool.getInstance().insertNoID(fireStoreCallbackListener, addFactorMap, "outsider");
+                else
+                {
+                    Toast.makeText(context, "출타자를 선택하세요.", Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
+                }
             }
         });
 

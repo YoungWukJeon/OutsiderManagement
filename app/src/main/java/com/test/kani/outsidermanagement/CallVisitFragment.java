@@ -105,20 +105,28 @@ public class CallVisitFragment extends Fragment
                 {
                     callVisitList = (ArrayList<HashMap<String, Object>>) obj;
 
-                    for( HashMap<String, Object> map : callVisitList )
-                    {
-                        Set<String> keys = map.keySet();
-                        Iterator<String> iter = keys.iterator();
+                    String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-                        while( iter.hasNext() )
+                    Iterator<HashMap<String, Object>> listIter = callVisitList.iterator();
+
+                    while( listIter.hasNext() )
+                    {
+                        HashMap<String, Object> map = listIter.next();
+                        Set<String> keys = map.keySet();
+                        Iterator<String> mapIter = keys.iterator();
+
+                        while( mapIter.hasNext() )
                         {
-                            String key = iter.next();
+                            String key = mapIter.next();
 
                             if( map.get(key) == null )
                                 map.put(key, "");
                         }
 
-                        map.put("outsiderDuring", map.get("startDate").toString() + " ~ " + map.get("endDate").toString());
+                        if( map.get("endDate").toString().compareTo(today) <= 0 )
+                            listIter.remove();
+                        else
+                            map.put("outsiderDuring", map.get("startDate").toString() + " ~ " + map.get("endDate").toString());
                     }
                 }
                 Collections.sort(callVisitList, new Comparator<HashMap<String, Object>>()
@@ -126,7 +134,7 @@ public class CallVisitFragment extends Fragment
                     @Override
                     public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2)
                     {
-                        return -o1.get("reportDate").toString().compareTo(o2.get("reportDate").toString());
+                        return o1.get("startDate").toString().compareTo(o2.get("reportDate").toString());
                     }
                 });
 
@@ -134,10 +142,9 @@ public class CallVisitFragment extends Fragment
             }
         });
 
-        FireStoreConnectionPool.getInstance().selectBetweenDate(fireStoreCallbackListener,
+        FireStoreConnectionPool.getInstance().selectLessThanDate(fireStoreCallbackListener,
                 "outsider", "supervisorId", MainActivity.myInfoMap.get("id").toString(),
-                "startDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
-                "endDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+                "startDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 
     private void bindUI(View view)

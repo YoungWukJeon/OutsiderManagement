@@ -46,7 +46,7 @@ public class FireStoreConnectionPool
                     @Override
                     public void onSuccess(DocumentReference documentReference)
                     {
-                        listener.doNext(true, true);
+                        listener.doNext(true, documentReference.getId());
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -134,7 +134,37 @@ public class FireStoreConnectionPool
         });
     }
 
-    public void updateBatch(final FireStoreCallbackListener listener, final String... args)
+    public void updateOne(final FireStoreCallbackListener listener, final String... args)
+    {
+        this.db.collection(args[0]).whereEqualTo(args[1], args[2]).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task)
+                    {
+                        if( task.isSuccessful() )
+                        {
+                            if( !task.getResult().isEmpty() )
+                            {
+                                for( QueryDocumentSnapshot document : task.getResult() )
+                                {
+                                    if( document.getString(args[3]).compareTo(args[6]) <= 0 &&
+                                            document.getString(args[4]).compareTo(args[6]) >= 0 )
+                                        db.collection(args[0]).document(document.getId()).update(args[5], args[6]);
+                                }
+
+                                listener.doNext(true, true);
+                            }
+                            else
+                                listener.doNext(true,false);
+                        }
+                        else
+                            listener.doNext(false, null);
+
+                    }
+                });
+    }
+
+    public void updateBatch(final FireStoreCallbackListener listener, final Map<String, Object> map, final String... args)
     {
         this.db.collection(args[0]).whereEqualTo(args[1], args[2]).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -148,7 +178,7 @@ public class FireStoreConnectionPool
                                 WriteBatch batch = db.batch();
 
                                 for( QueryDocumentSnapshot document : task.getResult() )
-                                    batch.update(document.getReference(), args[3], args[4], args[5], args[6]);
+                                    batch.update(document.getReference(), map);
 
                                 batch.commit();
 
@@ -196,6 +226,44 @@ public class FireStoreConnectionPool
 //        });
     }
 
+    public void deleteOne(final FireStoreCallbackListener listener, final String... args)
+    {
+        this.db.collection(args[0]).document(args[1]).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid)
+            {
+                listener.doNext(true, true);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e)
+            {
+                listener.doNext(false, null);
+            }
+        });
+    }
+
+    public void deleteBatch(final FireStoreCallbackListener listener, final String... args)
+    {
+        WriteBatch batch = this.db.batch();
+
+        batch.delete(this.db.collection(args[0]).document(args[1]));
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task)
+            {
+                listener.doNext(true, null);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e)
+            {
+                listener.doNext(false, null);
+            }
+        });
+    }
+
     public Map<String, Object> select(final FireStoreCallbackListener listener, String... args)
     {
         this.db.collection(args[0]).whereEqualTo(args[1], args[2])
@@ -211,7 +279,10 @@ public class FireStoreConnectionPool
                         List<Map<String, Object>> list = new ArrayList<> ();
 
                         for( QueryDocumentSnapshot document : task.getResult() )
+                        {
                             list.add(document.getData());
+                            list.get(list.size() - 1).put("documentId", document.getId());
+                        }
 
                         listener.doNext(true, list);
                     }
@@ -243,7 +314,10 @@ public class FireStoreConnectionPool
                         List<Map<String, Object>> list = new ArrayList<> ();
 
                         for( QueryDocumentSnapshot document : task.getResult() )
+                        {
                             list.add(document.getData());
+                            list.get(list.size() - 1).put("documentId", document.getId());
+                        }
 
                         listener.doNext(true, list);
                     }
@@ -258,11 +332,10 @@ public class FireStoreConnectionPool
         return null;
     }
 
-    public Map<String, Object> selectBetweenDate(final FireStoreCallbackListener listener, String... args)
+    public Map<String, Object> selectGreaterThanDate(final FireStoreCallbackListener listener, String... args)
     {
-        this.db.collection(args[0]).whereEqualTo(args[1], args[2]);
-        this.db.collection(args[0]).whereGreaterThanOrEqualTo(args[3], args[4]);
-        this.db.collection(args[0]).whereLessThanOrEqualTo(args[5], args[6])
+        this.db.collection(args[0]).whereEqualTo(args[1], args[2])
+                .whereGreaterThanOrEqualTo(args[3], args[4])
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
         {
             @Override
@@ -275,8 +348,44 @@ public class FireStoreConnectionPool
                         List<Map<String, Object>> list = new ArrayList<> ();
 
                         for( QueryDocumentSnapshot document : task.getResult() )
+                        {
                             list.add(document.getData());
+                            list.get(list.size() - 1).put("documentId", document.getId());
+                        }
 
+                        listener.doNext(true, list);
+                    }
+                    else
+                        listener.doNext(true,null);
+                }
+                else
+                    listener.doNext(false, null);
+            }
+        });
+
+        return null;
+    }
+
+    public Map<String, Object> selectLessThanDate(final FireStoreCallbackListener listener, String... args)
+    {
+        this.db.collection(args[0]).whereEqualTo(args[1], args[2])
+                .whereLessThanOrEqualTo(args[3], args[4])
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+        {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task)
+            {
+                if( task.isSuccessful() )
+                {
+                    if( !task.getResult().isEmpty() )
+                    {
+                        List<Map<String, Object>> list = new ArrayList<> ();
+
+                        for( QueryDocumentSnapshot document : task.getResult() )
+                        {
+                            list.add(document.getData());
+                            list.get(list.size() - 1).put("documentId", document.getId());
+                        }
                         listener.doNext(true, list);
                     }
                     else
@@ -301,7 +410,11 @@ public class FireStoreConnectionPool
                 if( task.isSuccessful() )
                 {
                     if( task.getResult().exists() )
-                        listener.doNext(true, task.getResult().getData());
+                    {
+                        Map<String, Object> map = task.getResult().getData();
+                        map.put("documentId", task.getResult().getId());
+                        listener.doNext(true, map);
+                    }
                     else
                         listener.doNext(true,null);
                 }

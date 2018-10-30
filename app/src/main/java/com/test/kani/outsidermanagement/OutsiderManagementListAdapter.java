@@ -75,7 +75,14 @@ public class OutsiderManagementListAdapter extends BaseAdapter
         else if ("일반".equals(this.list.get(i).get("type").toString().trim()))
             this.outsiderManagementItemLinearLayout.setBackgroundColor(Color.parseColor("#A9D18E"));
 
-        this.selectCheckBox.setChecked((boolean) this.list.get(i).get("checked"));
+        if( this.list.get(i).get("checked") instanceof Boolean )
+        {
+            this.selectCheckBox.setChecked((boolean) this.list.get(i).get("checked"));
+            this.selectCheckBox.setVisibility(CheckBox.VISIBLE);
+        }
+        else
+            this.selectCheckBox.setVisibility(CheckBox.GONE);
+
         this.classTextView.setText(this.list.get(i).get("class").toString().trim());
         this.nameTextView.setText(this.list.get(i).get("name").toString().trim());
         this.outsiderDuringTextView.setText(this.list.get(i).get("outsiderDuring").toString().trim());
