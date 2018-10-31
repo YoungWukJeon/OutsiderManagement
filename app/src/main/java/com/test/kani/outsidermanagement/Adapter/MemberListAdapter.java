@@ -1,4 +1,4 @@
-package com.test.kani.outsidermanagement;
+package com.test.kani.outsidermanagement.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.test.kani.outsidermanagement.R;
+import com.test.kani.outsidermanagement.Utilitiy.ViewHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,16 +75,6 @@ public class MemberListAdapter extends BaseAdapter
         this.nameTextView.setText(this.list.get(i).get("name").toString().trim());
 
         // Add Events
-//        this.memberItemLinearLayout.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//                Log.d("memberItemLinearLayout", "Clicked : " + i);
-//
-//
-//            }
-//        });
 
         return view;
     }

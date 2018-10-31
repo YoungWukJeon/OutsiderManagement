@@ -1,4 +1,4 @@
-package com.test.kani.outsidermanagement;
+package com.test.kani.outsidermanagement.Fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import com.test.kani.outsidermanagement.Activity.MainActivity;
+import com.test.kani.outsidermanagement.Adapter.CallVisitListAdapter;
+import com.test.kani.outsidermanagement.Utilitiy.FireStoreCallbackListener;
+import com.test.kani.outsidermanagement.Utilitiy.FireStoreConnectionPool;
+import com.test.kani.outsidermanagement.Utilitiy.LoadingDialog;
+import com.test.kani.outsidermanagement.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,7 +66,6 @@ public class CallVisitFragment extends Fragment
 
         this.setFireStoreCallbackListener(new FireStoreCallbackListener()
         {
-            //            final int ID_EXISTED = 0;
             final int TASK_FAILURE = 1;
 
             @Override
@@ -67,12 +73,6 @@ public class CallVisitFragment extends Fragment
             {
                 switch (errorCode)
                 {
-//                    case ID_EXISTED:
-//                        Log.d("RegistActivity", "This ID is existed");
-//                        Toast.makeText(getContext(), "아이디가 존재합니다.", Toast.LENGTH_SHORT).show();
-////                        idEditText.selectAll();
-////                        idEditText.requestFocus();
-//                        break;
                     case TASK_FAILURE:
                         Log.d("CallVisitFragment", "Task is not successful");
                         break;

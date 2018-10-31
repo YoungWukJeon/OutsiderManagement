@@ -1,4 +1,4 @@
-package com.test.kani.outsidermanagement;
+package com.test.kani.outsidermanagement.Activity;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
@@ -19,7 +19,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.test.kani.outsidermanagement.Utilitiy.FireStoreCallbackListener;
+import com.test.kani.outsidermanagement.Utilitiy.FireStoreConnectionPool;
+import com.test.kani.outsidermanagement.Utilitiy.LoadingDialog;
+import com.test.kani.outsidermanagement.R;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -58,8 +68,6 @@ public class LoginActivity extends AppCompatActivity
     AutoCompleteTextView idAutoCompleteTextView;
     EditText passwordEditText;
     Button loginBtn, registBtn;
-//    private View mProgressView;
-//    private View mLoginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -78,7 +86,7 @@ public class LoginActivity extends AppCompatActivity
             {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL)
                 {
-                    attemptLogin();
+                    // 키보드에서 완료 눌렀을 경우(에뮬에서는 enter 도 포함)
                     return true;
                 }
                 return false;
@@ -104,12 +112,6 @@ public class LoginActivity extends AppCompatActivity
                 startActivity(new Intent(LoginActivity.this, RegistActivity.class));
             }
         });
-
-//        FireStoreConnectionPool.getInstance().selectOnce(fireStoreCallbackListener, "test", "17-12345678", "2018-10-10");
-//        FireStoreConnectionPool.getInstance().selectOnce(fireStoreCallbackListener, "test", "17-12345678", "2018-10-25");
-
-//        mLoginFormView = findViewById(R.id.login_form);
-//        mProgressView = findViewById(R.id.login_progress);
     }
 
     private void populateAutoComplete()
@@ -118,8 +120,6 @@ public class LoginActivity extends AppCompatActivity
         {
             return;
         }
-
-//        getLoaderManager().initLoader(0, null, this);
     }
 
     private boolean mayRequestContacts()
@@ -176,11 +176,6 @@ public class LoginActivity extends AppCompatActivity
      */
     private void attemptLogin()
     {
-//        if (mAuthTask != null)
-//        {
-//            return;
-//        }
-
         // Reset errors.
         idAutoCompleteTextView.setError(null);
         passwordEditText.setError(null);
@@ -224,15 +219,14 @@ public class LoginActivity extends AppCompatActivity
         {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-//            showProgress(true);
-//            mAuthTask = new UserLoginTask(id, password);
-//            mAuthTask.execute((Void) null);
 
             this.setFireStoreCallbackListener(new FireStoreCallbackListener()
             {
                 final int ID_NOT_EXISTED = 0;
                 final int PASSWORD_NOT_MATCHED = 1;
                 final int TASK_FAILURE = 2;
+
+                boolean flag = false;
 
                 @Override
                 public void occurError(int errorCode)
@@ -271,23 +265,34 @@ public class LoginActivity extends AppCompatActivity
                         return;
                     }
 
-//                Log.d("class", ((HashMap<String, Object>) obj).get("class").toString());
-//                Log.d("name", ((HashMap<String, Object>) obj).get("name").toString());
-//                Log.d("supervisorId", ((HashMap<String, Object>) obj).get("supervisorId").toString());
-//                Log.d("outsider:content", (  ((HashMap<String, Object>)((HashMap<String, Object>) obj).get("outsider")).get("content").toString() )    );
-//                Log.d("report:content", (  ((HashMap<String, Object>)((HashMap<String, Object>) obj).get("report")).get("content")) + ""    );
-
-                    if (obj == null)
+                    if (obj == null && !flag)
                         occurError(ID_NOT_EXISTED);
-                    else
+                    else if( obj == null && flag )
+                    {
+                        MainActivity.myInfoMap.put("isOutsider", false);
+
+                        Map<String, Object> tempMap = new HashMap<> ();
+                        tempMap.put("isOutsider", false);
+                        tempMap.put("outsiderType", null);
+
+                        loadingDialog.show("Updating Outsider Flag");
+
+                        FireStoreConnectionPool.getInstance().update(fireStoreCallbackListener, tempMap, "member", id);  // false
+                    }
+                    else if( obj != null && !flag )
                     {
                         MainActivity.myInfoMap = (HashMap<String, Object>) obj;
 
                         if (password.equals(MainActivity.myInfoMap.get("password").toString().trim()))
                         {
+                            flag = true;
                             MainActivity.myInfoMap.put("id", id);
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            finish();
+
+                            loadingDialog.show("Searching for Outsider History");
+
+                            FireStoreConnectionPool.getInstance().selectLessThanDate(fireStoreCallbackListener,
+                                    "outsider", "memberId", id,
+                                    "startDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
                         }
                         else
                         {
@@ -295,15 +300,60 @@ public class LoginActivity extends AppCompatActivity
                             MainActivity.myInfoMap = null;
                         }
                     }
+                    else if( obj != null && flag && !(obj instanceof Boolean) )
+                    {
+                        ArrayList<HashMap<String, Object>> tempList = (ArrayList<HashMap<String, Object>>) obj;
+
+                        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+                        Iterator<HashMap<String, Object>> listIter = tempList.iterator();
+
+                        while( listIter.hasNext() )
+                        {
+                            HashMap<String, Object> map = listIter.next();
+
+                            if (map.get("endDate").toString().compareTo(today) <= 0)
+                                listIter.remove();
+                        }
+
+                        if( tempList.isEmpty() )        // 현재 날짜 기준으로 출타 중이지 않을 경우
+                        {
+                            MainActivity.myInfoMap.put("isOutsider", false);
+                            Map<String, Object> tempMap = new HashMap<> ();
+                            tempMap.put("isOutsider", false);
+                            tempMap.put("outsiderType", null);
+
+                            loadingDialog.show("Updating Outsider Flag");
+
+                            FireStoreConnectionPool.getInstance().update(fireStoreCallbackListener, tempMap, "member", id);  // false
+                        }
+                        else
+                        {
+                            MainActivity.myInfoMap.put("isOutsider", true);
+                            MainActivity.myInfoMap.put("outsiderType", tempList.get(0).get("outsiderType"));
+                            Map<String, Object> tempMap = new HashMap<> ();
+                            tempMap.put("isOutsider", true);
+                            tempMap.put("outsiderType", tempList.get(0).get("outsiderType"));
+
+                            loadingDialog.show("Updating Outsider Flag");
+
+                            FireStoreConnectionPool.getInstance().update(fireStoreCallbackListener, tempMap, "member", id);  // false
+                        }
+                    }
+                    else
+                    {
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
+                    }
                 }
             });
 
 
-                if( this.loadingDialog == null )
-                    this.loadingDialog = new LoadingDialog(this);
+            if( this.loadingDialog == null )
+                this.loadingDialog = new LoadingDialog(this);
 
-                this.loadingDialog.show("Login");
-                FireStoreConnectionPool.getInstance().selectOne(fireStoreCallbackListener, "member", id);
+            this.loadingDialog.show("Login");
+            FireStoreConnectionPool.getInstance().selectOne(fireStoreCallbackListener, "member", id);
         }
     }
 
@@ -319,180 +369,5 @@ public class LoginActivity extends AppCompatActivity
         //TODO: Replace this with your own logic
         return password.length() > 2;
     }
-//
-//    /**
-//     * Shows the progress UI and hides the login form.
-//     */
-//    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-//    private void showProgress(final boolean show)
-//    {
-//        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-//        // for very easy animations. If available, use these APIs to fade-in
-//        // the progress spinner.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
-//        {
-//            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-//
-//            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-//            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-//                    show ? 0 : 1).setListener(new AnimatorListenerAdapter()
-//            {
-//                @Override
-//                public void onAnimationEnd(Animator animation)
-//                {
-//                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-//                }
-//            });
-//
-//            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-//            mProgressView.animate().setDuration(shortAnimTime).alpha(
-//                    show ? 1 : 0).setListener(new AnimatorListenerAdapter()
-//            {
-//                @Override
-//                public void onAnimationEnd(Animator animation)
-//                {
-//                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-//                }
-//            });
-//        }
-//        else
-//        {
-//            // The ViewPropertyAnimator APIs are not available, so simply show
-//            // and hide the relevant UI components.
-//            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-//            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-//        }
-//    }
-//
-//    @Override
-//    public Loader<Cursor> onCreateLoader(int i, Bundle bundle)
-//    {
-//        return new CursorLoader(this,
-//                // Retrieve data rows for the device user's 'profile' contact.
-//                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-//                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-//
-//                // Select only email addresses.
-//                ContactsContract.Contacts.Data.MIMETYPE +
-//                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-//                .CONTENT_ITEM_TYPE},
-//
-//                // Show primary email addresses first. Note that there won't be
-//                // a primary email address if the user hasn't specified one.
-//                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-//    }
-//
-//    @Override
-//    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
-//    {
-//        List<String> emails = new ArrayList<>();
-//        cursor.moveToFirst();
-//        while (!cursor.isAfterLast())
-//        {
-//            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-//            cursor.moveToNext();
-//        }
-//
-//        addEmailsToAutoComplete(emails);
-//    }
-//
-//    @Override
-//    public void onLoaderReset(Loader<Cursor> cursorLoader)
-//    {
-//
-//    }
-//
-//    private void addEmailsToAutoComplete(List<String> emailAddressCollection)
-//    {
-//        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-//        ArrayAdapter<String> adapter =
-//                new ArrayAdapter<>(LoginActivity.this,
-//                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-//
-//        idAutoCompleteTextView.setAdapter(adapter);
-//    }
-//
-//
-//    private interface ProfileQuery
-//    {
-//        String[] PROJECTION = {
-//                ContactsContract.CommonDataKinds.Email.ADDRESS,
-//                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-//        };
-//
-//        int ADDRESS = 0;
-//        int IS_PRIMARY = 1;
-//    }
-//
-//    /**
-//     * Represents an asynchronous login/registration task used to authenticate
-//     * the user.
-//     */
-//    public class UserLoginTask extends AsyncTask<Void, Void, Boolean>
-//    {
-//
-//        private final String mId;
-//        private final String mPassword;
-//
-//        UserLoginTask(String id, String password)
-//        {
-//            mId = id;
-//            mPassword = password;
-//        }
-//
-//        @Override
-//        protected Boolean doInBackground(Void... params)
-//        {
-//            // TODO: attempt authentication against a network service.
-//
-//            try
-//            {
-//                // Simulate network access.
-//                Thread.sleep(2000);
-//            }
-//            catch (InterruptedException e)
-//            {
-//                return false;
-//            }
-//
-//            for (String credential : DUMMY_CREDENTIALS)
-//            {
-//                String[] pieces = credential.split(":");
-//                if (pieces[0].equals(mId))
-//                {
-//                    // Account exists, return true if the password matches.
-//                    return pieces[1].equals(mPassword);
-//                }
-//            }
-//
-//            // TODO: register the new account here.
-//            return true;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(final Boolean success)
-//        {
-//            mAuthTask = null;
-//            showProgress(false);
-//
-//            if (success)
-//            {
-//                finish();
-//            }
-//            else
-//            {
-//                passwordEditText.setError(getString(R.string.error_incorrect_password));
-//                passwordEditText.requestFocus();
-//            }
-//        }
-//
-//        @Override
-//        protected void onCancelled()
-//        {
-//            mAuthTask = null;
-//            showProgress(false);
-//        }
-//    }
-
 }
 

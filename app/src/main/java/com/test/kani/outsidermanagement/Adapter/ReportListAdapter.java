@@ -1,4 +1,4 @@
-package com.test.kani.outsidermanagement;
+package com.test.kani.outsidermanagement.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.test.kani.outsidermanagement.Activity.MainActivity;
+import com.test.kani.outsidermanagement.R;
+import com.test.kani.outsidermanagement.Utilitiy.ViewHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,11 +72,11 @@ public class ReportListAdapter extends BaseAdapter
         // Set attributes
         if( (boolean) MainActivity.myInfoMap.get("officer") )
         {
-            if ("관심".equals(this.list.get(i).get("type").toString().trim()))
+            if ("관심".equals(this.list.get(i).get("outsiderType").toString().trim()))
                 this.reportItemLinearLayout.setBackgroundColor(Color.parseColor("#FB6F53"));
-            else if ("배려".equals(this.list.get(i).get("type").toString().trim()))
+            else if ("배려".equals(this.list.get(i).get("outsiderType").toString().trim()))
                 this.reportItemLinearLayout.setBackgroundColor(Color.parseColor("#FFF2CC"));
-            else if ("일반".equals(this.list.get(i).get("type").toString().trim()))
+            else if ("일반".equals(this.list.get(i).get("outsiderType").toString().trim()))
                 this.reportItemLinearLayout.setBackgroundColor(Color.parseColor("#A9D18E"));
         }
 

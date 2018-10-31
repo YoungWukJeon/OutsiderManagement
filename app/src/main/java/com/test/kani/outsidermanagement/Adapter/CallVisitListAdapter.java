@@ -1,4 +1,4 @@
-package com.test.kani.outsidermanagement;
+package com.test.kani.outsidermanagement.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.test.kani.outsidermanagement.R;
+import com.test.kani.outsidermanagement.Utilitiy.ViewHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,11 +73,11 @@ public class CallVisitListAdapter extends BaseAdapter
         this.telImageButton = ViewHolder.get(view, R.id.tel_imageBtn);
 
         // Set attributes
-        if ("관심".equals(this.list.get(i).get("type").toString().trim()))
+        if ("관심".equals(this.list.get(i).get("outsiderType").toString().trim()))
             this.callVisitItemLinearLayout.setBackgroundColor(Color.parseColor("#FB6F53"));
-        else if ("배려".equals(this.list.get(i).get("type").toString().trim()))
+        else if ("배려".equals(this.list.get(i).get("outsiderType").toString().trim()))
             this.callVisitItemLinearLayout.setBackgroundColor(Color.parseColor("#FFF2CC"));
-        else if ("일반".equals(this.list.get(i).get("type").toString().trim()))
+        else if ("일반".equals(this.list.get(i).get("outsiderType").toString().trim()))
             this.callVisitItemLinearLayout.setBackgroundColor(Color.parseColor("#A9D18E"));
 
         this.classTextView.setText(this.list.get(i).get("class").toString().trim());

@@ -1,4 +1,4 @@
-package com.test.kani.outsidermanagement;
+package com.test.kani.outsidermanagement.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.test.kani.outsidermanagement.Activity.LoginActivity;
+import com.test.kani.outsidermanagement.Activity.MainActivity;
+import com.test.kani.outsidermanagement.Utilitiy.FireStoreCallbackListener;
+import com.test.kani.outsidermanagement.Utilitiy.FireStoreConnectionPool;
+import com.test.kani.outsidermanagement.Utilitiy.LoadingDialog;
+import com.test.kani.outsidermanagement.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +103,6 @@ public class MyInfoFragment extends Fragment
 
         this.setFireStoreCallbackListener(new FireStoreCallbackListener()
         {
-            //            final int ID_EXISTED = 0;
             final int TASK_FAILURE = 1;
 
             @Override
@@ -104,12 +110,6 @@ public class MyInfoFragment extends Fragment
             {
                 switch (errorCode)
                 {
-    //                    case ID_EXISTED:
-    //                        Log.d("RegistActivity", "This ID is existed");
-    //                        Toast.makeText(getContext(), "아이디가 존재합니다.", Toast.LENGTH_SHORT).show();
-    ////                        idEditText.selectAll();
-    ////                        idEditText.requestFocus();
-    //                        break;
                     case TASK_FAILURE:
                         Log.d("MyInfoFragment", "Task is not successful");
                         break;
@@ -132,11 +132,8 @@ public class MyInfoFragment extends Fragment
                     occurError(TASK_FAILURE);
                     return;
                 }
-
-//                Toast.makeText(getContext(), "정보수정완료", Toast.LENGTH_SHORT).show();
             }
         });
-
 
         // Add Events
         this.logoutBtn.setOnClickListener(new View.OnClickListener()
@@ -145,7 +142,6 @@ public class MyInfoFragment extends Fragment
             public void onClick(View v)
             {
                 MainActivity.myInfoMap = null;
-                MainActivity.document = null;
 
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 getActivity().finish();
@@ -179,9 +175,6 @@ public class MyInfoFragment extends Fragment
                 switchTextView(TextView.VISIBLE);
                 switchEditText(EditText.GONE);
                 logoutBtn.setVisibility(Button.VISIBLE);
-
-//                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
             }
         });
 
@@ -195,9 +188,6 @@ public class MyInfoFragment extends Fragment
                 switchTextView(TextView.VISIBLE);
                 switchEditText(EditText.GONE);
                 logoutBtn.setVisibility(Button.VISIBLE);
-
-//                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
             }
         });
     }
@@ -240,27 +230,33 @@ public class MyInfoFragment extends Fragment
         this.myInfoMap.put("tel", this.telEditText.getText().toString().trim());
         this.myInfoMap.put("startDate", this.startDateEditText.getText().toString().trim());
         this.myInfoMap.put("endDate", this.endDateEditText.getText().toString().trim());
+        this.myInfoMap.remove("documentId");
+
 
         Map<String, Object> map = new HashMap<> ();
-        map.put("class", MainActivity.myInfoMap.get("class").toString());
-        map.put("name", MainActivity.myInfoMap.get("name").toString());
+        map.put("class", this.myInfoMap.get("class").toString());
+        map.put("name", this.myInfoMap.get("name").toString());
+        map.put("tel", this.myInfoMap.get("tel").toString());
 
-        if( !(boolean) this.myInfoMap.get("officer") )
+        if( !(boolean) this.myInfoMap.get("officer") )  // 병이면
         {
             this.myInfoMap.put("supervisorId", this.supervisorEditText.getText().toString().trim());
-            map.put("supervisorId", MainActivity.myInfoMap.get("supervisorId").toString());
-            map.put("tel", MainActivity.myInfoMap.get("tel").toString());
+            map.put("supervisorId", this.myInfoMap.get("supervisorId").toString());
         }
+
+        MainActivity.myInfoMap.putAll(this.myInfoMap);
 
         FireStoreConnectionPool.getInstance().update(fireStoreCallbackListener, myInfoMap,
                 "member", MainActivity.myInfoMap.get("id").toString());
 
-        FireStoreConnectionPool.getInstance().updateBatch(fireStoreCallbackListener, map,
-                "report", "memberId", MainActivity.myInfoMap.get("id").toString());
+        if( !(boolean) this.myInfoMap.get("officer") )  // 병이면
+        {
+            FireStoreConnectionPool.getInstance().updateBatch(fireStoreCallbackListener, map,
+                    "report", "memberId", MainActivity.myInfoMap.get("id").toString());
 
-        FireStoreConnectionPool.getInstance().updateBatch(fireStoreCallbackListener, map,
-                "outsider", "memberId", MainActivity.myInfoMap.get("id").toString());
-
+            FireStoreConnectionPool.getInstance().updateBatch(fireStoreCallbackListener, map,
+                    "outsider", "memberId", MainActivity.myInfoMap.get("id").toString());
+        }
     }
 
     private void switchTextView(int visibility)

@@ -1,4 +1,4 @@
-package com.test.kani.outsidermanagement;
+package com.test.kani.outsidermanagement.Activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.test.kani.outsidermanagement.Utilitiy.FireStoreCallbackListener;
+import com.test.kani.outsidermanagement.Utilitiy.FireStoreConnectionPool;
+import com.test.kani.outsidermanagement.Utilitiy.LoadingDialog;
+import com.test.kani.outsidermanagement.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,6 +101,7 @@ public class RegistActivity extends AppCompatActivity
                 {
                     String id = myInfoMap.get("id").toString();
                     myInfoMap.remove("id");
+                    myInfoMap.put("outsiderType", null);
                     FireStoreConnectionPool.getInstance().insert(fireStoreCallbackListener, myInfoMap,
                             "member", id);
                     idValidate = true;
@@ -134,6 +140,7 @@ public class RegistActivity extends AppCompatActivity
                 myInfoMap.put("startDate", startDateEditText.getText().toString().trim());
                 myInfoMap.put("endDate", endDateEditText.getText().toString().trim());
                 myInfoMap.put("isOutsider", false);
+                myInfoMap.put("outsiderType", null);
 
                 if( !(boolean) myInfoMap.get("officer") )
                     myInfoMap.put("supervisorId", supervisorEditText.getText().toString().trim());
@@ -150,9 +157,6 @@ public class RegistActivity extends AppCompatActivity
 
                 FireStoreConnectionPool.getInstance().selectOne(fireStoreCallbackListener,
                         "member", myInfoMap.get("id").toString());
-
-//                FireStoreConnectionPool.getInstance().insert(fireStoreCallbackListener, myInfoMap,
-//                        "outsider", "member", "user", myInfoMap.get("id").toString());
             }
         });
 

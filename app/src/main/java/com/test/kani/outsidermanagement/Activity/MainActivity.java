@@ -1,4 +1,4 @@
-package com.test.kani.outsidermanagement;
+package com.test.kani.outsidermanagement.Activity;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,14 +8,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.test.kani.outsidermanagement.Fragment.CallVisitFragment;
+import com.test.kani.outsidermanagement.Fragment.MyInfoFragment;
+import com.test.kani.outsidermanagement.Fragment.OutsiderManagementFragment;
+import com.test.kani.outsidermanagement.R;
+import com.test.kani.outsidermanagement.Fragment.ReportFragment;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
 {
     public static HashMap<String, Object> myInfoMap = new HashMap<> ();
-    public static QueryDocumentSnapshot document;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -61,8 +64,6 @@ public class MainActivity extends AppCompatActivity
                     }
                     break;
             }
-
-
 
             if( selectedFragment != null )
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();

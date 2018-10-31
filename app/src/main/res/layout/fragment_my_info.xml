@@ -37,16 +37,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
-                    android:text="군번 | "
+                    android:text="군번"
+                    android:background="@drawable/border2"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="30sp"/>
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:background="@drawable/border1"
+                    android:textSize="20sp"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:id="@+id/id_textView"/>
@@ -64,17 +66,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
-                    android:text="비밀번호 | "
+                    android:text="비밀번호"
+                    android:background="@drawable/border2"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="30sp"/>
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:password="true"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
+                    android:background="@drawable/border1"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:id="@+id/password_textView"/>
@@ -83,11 +87,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:background="@drawable/border3"
+                    android:textSize="20sp"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:inputType="textPassword"
                     android:visibility="gone"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
                     android:id="@+id/password_editText"/>
 
             </LinearLayout>
@@ -103,17 +110,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
-                    android:text="소속 | "
+                    android:text="소속"
+                    android:background="@drawable/border2"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="30sp"/>
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
                     android:textColor="@android:color/black"
+                    android:background="@drawable/border1"
                     android:textStyle="bold"
                     android:id="@+id/from_textView"/>
 
@@ -121,11 +130,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
                     android:textColor="@android:color/black"
+                    android:background="@drawable/border3"
                     android:textStyle="bold"
                     android:inputType="text"
                     android:visibility="gone"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
                     android:id="@+id/from_editText"/>
 
             </LinearLayout>
@@ -141,10 +153,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
-                    android:text="계급 | "
+                    android:text="계급"
+                    android:background="@drawable/border2"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="30sp"/>
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -152,7 +165,8 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:background="@drawable/border1"
+                    android:textSize="20sp"
                     android:id="@+id/class_textView"/>
 
                 <EditText
@@ -160,10 +174,13 @@
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
+                    android:background="@drawable/border3"
                     android:textStyle="bold"
                     android:inputType="text"
                     android:visibility="gone"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
                     android:id="@+id/class_editText"/>
 
             </LinearLayout>
@@ -179,10 +196,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
-                    android:text="이름 | "
+                    android:text="이름"
+                    android:background="@drawable/border2"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="30sp"/>
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -190,7 +208,8 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:background="@drawable/border1"
+                    android:textSize="20sp"
                     android:id="@+id/name_textView"/>
 
                 <EditText
@@ -199,9 +218,12 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:background="@drawable/border3"
+                    android:textSize="20sp"
                     android:inputType="text"
                     android:visibility="gone"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
                     android:id="@+id/name_editText"/>
 
             </LinearLayout>
@@ -219,27 +241,32 @@
                     android:layout_marginRight="10sp"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:text="연락처 | "
-                    android:textSize="30sp"/>
+                    android:text="연락처"
+                    android:background="@drawable/border2"
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
+                    android:background="@drawable/border1"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
                     android:id="@+id/tel_textView"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
+                    android:background="@drawable/border3"
                     android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
                     android:inputType="date"
                     android:visibility="gone"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
                     android:id="@+id/tel_editText"/>
 
             </LinearLayout>
@@ -257,8 +284,9 @@
                     android:layout_marginRight="10sp"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:text="직속상관군번 | "
-                    android:textSize="30sp"/>
+                    android:text="직속상관군번"
+                    android:background="@drawable/border2"
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -266,7 +294,8 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:background="@drawable/border1"
+                    android:textSize="20sp"
                     android:id="@+id/supervisor_textView"/>
 
                 <EditText
@@ -275,9 +304,12 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:background="@drawable/border3"
+                    android:textSize="20sp"
                     android:inputType="date"
                     android:visibility="gone"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
                     android:id="@+id/supervisor_editText"/>
 
             </LinearLayout>
@@ -293,10 +325,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
-                    android:text="입대일 | "
+                    android:text="입대일"
+                    android:background="@drawable/border2"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="30sp"/>
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -304,7 +337,8 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:background="@drawable/border1"
+                    android:textSize="20sp"
                     android:id="@+id/start_date_textView"/>
 
                 <EditText
@@ -313,9 +347,12 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:background="@drawable/border3"
+                    android:textSize="20sp"
                     android:inputType="date"
                     android:visibility="gone"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
                     android:id="@+id/start_date_editText"/>
 
             </LinearLayout>
@@ -331,19 +368,21 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
-                    android:text="전역일 | "
+                    android:text="전역일"
+                    android:background="@drawable/border2"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="30sp"/>
+                    android:textSize="20sp"/>
 
                 <TextView
+                    android:id="@+id/end_date_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
-                    android:id="@+id/end_date_textView"/>
+                    android:background="@drawable/border1"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
                 <EditText
                     android:layout_width="match_parent"
@@ -351,9 +390,12 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginRight="10sp"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
+                    android:background="@drawable/border3"
                     android:inputType="date"
                     android:visibility="gone"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
                     android:id="@+id/end_date_editText"/>
 
             </LinearLayout>

@@ -1,4 +1,4 @@
-package com.test.kani.outsidermanagement;
+package com.test.kani.outsidermanagement.Utilitiy;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,6 +10,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.test.kani.outsidermanagement.Activity.MainActivity;
+import com.test.kani.outsidermanagement.Adapter.MemberListAdapter;
+import com.test.kani.outsidermanagement.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +68,6 @@ public class OutsiderAddDialog extends BaseDialog
 
         this.setFireStoreCallbackListener(new FireStoreCallbackListener()
         {
-            //            final int ID_EXISTED = 0;
             final int TASK_FAILURE = 1;
 
             @Override
@@ -72,12 +75,6 @@ public class OutsiderAddDialog extends BaseDialog
             {
                 switch (errorCode)
                 {
-//                    case ID_EXISTED:
-//                        Log.d("RegistActivity", "This ID is existed");
-//                        Toast.makeText(getContext(), "아이디가 존재합니다.", Toast.LENGTH_SHORT).show();
-////                        idEditText.selectAll();
-////                        idEditText.requestFocus();
-//                        break;
                     case TASK_FAILURE:
                         Log.d("OutsiderAddDialog", "Task is not successful");
                         break;
@@ -205,7 +202,7 @@ public class OutsiderAddDialog extends BaseDialog
 
                 addFactorMap = new HashMap<> ();
 
-                addFactorMap.put("type", getType());
+                addFactorMap.put("outsiderType", getType());
                 addFactorMap.put("startDate", startDateEditText.getText().toString().trim());
                 addFactorMap.put("endDate", endDateEditText.getText().toString().trim());
                 addFactorMap.put("outsiderReason", outsiderReasonEditText.getText().toString().trim());
